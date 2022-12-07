@@ -4,20 +4,8 @@ include 'database.php';
 
 $categoryNames = [];
 
-$sql1 = 'INSERT INTO listCategories (category_name) VALUES (?)';
-$sql2 = 'SELECT * FROM listCategories';
+$sql = 'SELECT * FROM listCategories';
 global $conn;
-
-
-if (isset($_POST['buttonAddNewCategory'])) {
-    $stmt = $conn->prepare($sql1);
-    $stmt->bind_param('s', $_POST['categoryName']);
-    try {
-        $stmt->execute();
-    } catch (Exception $e) {
-        echo 'Category already added!<br>';
-    }
-}
 ?>
 
 <!doctype html>
@@ -45,11 +33,9 @@ if (isset($_POST['buttonAddNewCategory'])) {
 <body>
     <a href="profile.php">go back</a>
     <h2>Manage the available categories of grocery goods: </h2>
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post">
-        <input type="submit" name="buttonAddCategory" value="Add Category">
-    </form><br>
+    <button><a href="add-category.php">Add Category</a></button>
     <?php
-    $result = $conn->query($sql2);
+    $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         echo "<table>";
         echo "<tr>";
@@ -72,15 +58,6 @@ if (isset($_POST['buttonAddNewCategory'])) {
     } else {
         echo "Category not found.";
     }
-
-    echo '<form action='.$_SERVER['PHP_SELF'].' method="post">';
-    if (isset($_POST['buttonAddCategory'])
-        && !(isset($_POST['buttonCancelAddNewCategory']))) {
-        echo '<input type="text" name="categoryName" placeholder="Category Name">';
-        echo '<input type="submit" name="buttonAddNewCategory" value="Add"/>';
-        echo '<input type="submit" name="buttonCancelAddNewCategory" value="Cancel"/>';
-    }
-    echo '</form>';
     ?>
 </body>
 </html>
