@@ -11,7 +11,7 @@ if (isset($_POST['buttonSignOut'])) {
 ?>
 
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <title>Profile</title>
 </head>
@@ -41,10 +41,10 @@ echo "<br>";
 <form method="post">
     <?php
     if ($_SESSION['userRoleId'] === 2) {
-        echo '<div><input type="submit" name="buttonManageList" value="manage list"/></div>';
+        echo '<div><input type="submit" name="buttonManageList" value="Manage List"/></div>';
     }
     ?>
-    <div><input type="submit" name="buttonSignOut" value="sign out"/></div>
+    <div><input type="submit" name="buttonSignOut" value="Sign Out"/></div>
 </form>
 </body>
 </html>
