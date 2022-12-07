@@ -9,7 +9,7 @@ global $conn;
 ?>
 
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <title>List management</title>
     <style>
@@ -47,10 +47,10 @@ global $conn;
             $categoryNames[] = $row['category_name'];
             echo "<tr>";
             echo "<td>".$row['category_name']."</td>";
-//            echo "<td><a href='update.php?id=".$row['id']."'>update</a>";
-            echo "<td><a href=''>update</a>";
-//            echo "<td><a href='delete.php?id=".$row['id']."'>delete</a>";
-            echo "<td><a href=''>delete</a>";
+            echo "<td><a href='update-category.php?id=".$row['category_id']."'>update</a>";
+//            echo "<td><a href=''>update</a>";
+            echo "<td><a href='delete-category.php?id=".$row['category_id']."'>delete</a>";
+//            echo "<td><a href='delete-category.php'>delete</a>";
             echo "</tr>";
         }
         echo "</table><br>";

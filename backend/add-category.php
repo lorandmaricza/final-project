@@ -3,17 +3,21 @@
 include 'database.php';
 include 'manage-list.php';
 
-$sql1 = 'INSERT INTO listCategories (category_name) VALUES (?)';
+$sql = 'INSERT INTO listCategories (category_name) VALUES (?)';
 global $conn;
 
 
 if (isset($_POST['buttonAddNewCategory'])) {
-    $stmt = $conn->prepare($sql1);
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param('s', $_POST['categoryName']);
     try {
         $stmt->execute();
     } catch (Exception $e) {
         echo 'Category already added!<br>';
+    }
+
+    if (is_null($e)) {
+        header('Location: manage-list.php');
     }
 }
 
