@@ -48,9 +48,7 @@ global $conn;
             echo "<tr>";
             echo "<td>".$row['category_name']."</td>";
             echo "<td><a href='update-category.php?id=".$row['category_id']."'>update</a>";
-//            echo "<td><a href=''>update</a>";
             echo "<td><a href='delete-category.php?id=".$row['category_id']."'>delete</a>";
-//            echo "<td><a href='delete-category.php'>delete</a>";
             echo "</tr>";
         }
         echo "</table><br>";

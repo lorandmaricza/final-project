@@ -6,6 +6,7 @@ include 'manage-list.php';
 $sql = 'INSERT INTO listCategories (category_name) VALUES (?)';
 global $conn;
 
+$exception = null;
 
 if (isset($_POST['buttonAddNewCategory'])) {
     $stmt = $conn->prepare($sql);
@@ -14,9 +15,10 @@ if (isset($_POST['buttonAddNewCategory'])) {
         $stmt->execute();
     } catch (Exception $e) {
         echo 'Category already added!<br>';
+        $exception = $e;
     }
 
-    if (is_null($e)) {
+    if (is_null($exception)) {
         header('Location: manage-list.php');
     }
 }
