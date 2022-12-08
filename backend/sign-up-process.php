@@ -9,10 +9,11 @@ $lastNamePost = $_POST['lastName'];
 $emailPost = $_POST['email'];
 $passwordPost = $_POST['password'];
 $confirmPasswordPost = $_POST['confirmPassword'];
+$userRoleIdPost = $_POST['role'] === 'Supplier' ? 2 : 1;
 
 $sql1 = 'SELECT * FROM users WHERE email = ?';
-$sql2 = 'INSERT INTO users (first_name, last_name, email, password) VALUES (?,?,?,?)';
-$sql3 = 'SELECT id, role_id FROM users WHERE email = ?';
+$sql2 = 'INSERT INTO users (first_name, last_name, email, password, role_id) VALUES (?,?,?,?,?)';
+$sql3 = 'SELECT id FROM users WHERE email = ?';
 global $conn;
 
 $stmt = $conn->prepare($sql1);
@@ -26,22 +27,19 @@ if ($stmt->num_rows > 0) {
     echo 'passwords do not match';
 } else {
     $stmt = $conn->prepare($sql2);
-    $stmt->bind_param('ssss', $firstNamePost, $lastNamePost, $emailPost, $passwordPost);
-    if ($stmt->execute()) {
-        $stmt = $conn->prepare($sql3);
-        $stmt->bind_param('s', $emailPost);
-        $stmt->execute();
-        $stmt->store_result();
-        $stmt->bind_result($userId, $userRoleId);
-        $stmt->fetch();
-        $_SESSION['userId'] = $userId;
-        $_SESSION['userRoleId'] = $userRoleId;
-        $_SESSION['loggedIn'] = true;
-        $_SESSION['firstName'] = $firstNamePost;
-        $_SESSION['lastName'] = $lastNamePost;
-        header('Location: profile.php');
-    } else {
-        echo "error: " . $conn->error;
-    }
+    $stmt->bind_param('ssssi', $firstNamePost, $lastNamePost, $emailPost, $passwordPost, $userRoleIdPost);
+    $stmt->execute();
+    $stmt = $conn->prepare($sql3);
+    $stmt->bind_param('s', $emailPost);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($userId);
+    $stmt->fetch();
+    $_SESSION['userId'] = $userId;
+    $_SESSION['userRoleId'] = $userRoleIdPost;
+    $_SESSION['loggedIn'] = true;
+    $_SESSION['firstName'] = $firstNamePost;
+    $_SESSION['lastName'] = $lastNamePost;
+    header('Location: profile.php');
 }
 

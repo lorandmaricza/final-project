@@ -26,10 +26,10 @@
         </div>
         <br>
         <div>
-            <input type="radio" name="role" value="Supplier">
-            <label for="html">supplier</label>
             <input type="radio" name="role" value="Consumer">
             <label for="css">consumer</label>
+            <input type="radio" name="role" value="Supplier">
+            <label for="html">supplier</label>
         </div>
         <br>
         <div>

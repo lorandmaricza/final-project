@@ -21,9 +21,12 @@ if (isset($_POST['buttonSignOut'])) {
 <?php
 switch ($_SESSION['userRoleId']) {
     case 1:
-        echo "<h3>role: user</h3>";
+        echo "<h3>role: consumer</h3>";
         break;
     case 2:
+        echo "<h3>role: supplier</h3>";
+        break;
+    case 3:
         echo "<h3>role: admin</h3>";
         break;
     default:

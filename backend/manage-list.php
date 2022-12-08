@@ -31,7 +31,7 @@ global $conn;
     </style>
 </head>
 <body>
-    <a href="profile.php">go back</a>
+    <a href="profile.php">&larr; go back</a>
     <h2>Manage the available categories of grocery goods: </h2>
     <button><a href="add-category.php">Add Category</a></button>
     <?php
