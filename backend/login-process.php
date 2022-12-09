@@ -3,6 +3,7 @@ session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 include 'login.php';
 include 'database.php';
+include 'functions.php';
 
 $emailPost = $_POST['email'];
 $passwordPost = $_POST['password'];
@@ -18,6 +19,7 @@ $stmt->store_result();
 if ($stmt->num_rows == 1) {
     $stmt->bind_result($userId, $firstName, $lastName, $password, $userRoleId);
     $stmt->fetch();
+    $stmt->close();
 
     if ($passwordPost === $password) {
         session_regenerate_id();
@@ -26,15 +28,12 @@ if ($stmt->num_rows == 1) {
         $_SESSION['userRoleId'] = $userRoleId;
         $_SESSION['firstName'] = $firstName;
         $_SESSION['lastName'] = $lastName;
-        header('Location: profile.php');
-        die();
+        redirect($userRoleId);
+        die(); //necessary?
     } else {
         echo 'incorrect email or password';
     }
 } else {
     echo 'incorrect email or password';
 }
-
-$stmt->close();
-
 

@@ -1,8 +1,9 @@
 <?php
 session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-include "sign-up.php";
-include "database.php";
+include 'sign-up.php';
+include 'database.php';
+include 'functions.php';
 
 $firstNamePost = $_POST['firstName'];
 $lastNamePost = $_POST['lastName'];
@@ -35,11 +36,12 @@ if ($stmt->num_rows > 0) {
     $stmt->store_result();
     $stmt->bind_result($userId);
     $stmt->fetch();
+    $stmt->close();
     $_SESSION['userId'] = $userId;
     $_SESSION['userRoleId'] = $userRoleIdPost;
     $_SESSION['loggedIn'] = true;
     $_SESSION['firstName'] = $firstNamePost;
     $_SESSION['lastName'] = $lastNamePost;
-    header('Location: profile.php');
+    redirect($userId);
 }
 
