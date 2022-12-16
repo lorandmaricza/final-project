@@ -43,7 +43,7 @@ echo "<br>";
 
 <form method="post">
     <?php
-    if ($_SESSION['userRoleId'] === 2) {
+    if ($_SESSION['userRoleId'] === 3) {
         echo '<div><input type="submit" name="buttonManageList" value="Manage List"/></div>';
     }
     ?>
