@@ -1,32 +1,22 @@
 <?php
-
 include 'database.php';
-include 'manage-list.php';
-
-$sql = 'INSERT INTO listCategories (category_name) VALUES (?)';
+include 'cors.php';
 global $conn;
 
-$exception = null;
+$data = json_decode(file_get_contents('php://input'), true);
+$category_name = $data['categoryName'];
 
-if (isset($_POST['buttonAddNewCategory'])) {
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $_POST['categoryName']);
-    try {
-        $stmt->execute();
-    } catch (Exception $e) {
-        echo 'Category already added!<br>';
-        $exception = $e;
-    }
+$sql = 'INSERT INTO listCategories (category_name) VALUES (?)';
 
-    if (is_null($exception)) {
-        header('Location: manage-list.php');
-    }
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $category_name);
+try {
+    $stmt->execute();
+    echo json_encode(['status' => 'success', 'message' => 'Category successfully added']);
+} catch (Exception $e) {
+    echo json_encode(['status' => 'error', 'message' => $e]);
 }
+exit();
 
-echo '<form action='.$_SERVER['PHP_SELF'].' method="post">';
-if (!(isset($_POST['buttonCancelAddNewCategory']))) {
-    echo '<input type="text" name="categoryName" placeholder="Category Name">';
-    echo '<input type="submit" name="buttonAddNewCategory" value="Add"/>';
-    echo '<input type="submit" name="buttonCancelAddNewCategory" value="Cancel"/>';
-}
-echo '</form>';
+
+

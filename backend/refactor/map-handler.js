@@ -18,6 +18,7 @@ locations.map(location => {
         autoPan: true
     }).addTo(map)
         .bindPopup(location.info).openPopup();
+
 })
 
 var latLng = L.latLng(lat,lng);

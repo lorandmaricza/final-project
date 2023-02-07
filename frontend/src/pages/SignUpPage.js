@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function SignUpPage() {
     const [user, setUser] = useState({
@@ -10,6 +10,9 @@ function SignUpPage() {
         confirmPassword: "",
         role: ""
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = e => {
         setUser({
@@ -18,16 +21,31 @@ function SignUpPage() {
         });
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // send user object to server
+        setIsLoading(true);
+        const response = await fetch("http://localhost:8888/final-project/backend/signup.php", {
+            mode: "cors",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        });
+        const data = await response.json();
+        setIsLoading(false);
+        if (data.status === "success") {
+            navigate('/login');
+        } else {
+            setError(data.message);
+        }
     };
+
 
     return (
         <div className="signup-form">
             <form onSubmit={handleSubmit}>
                 <h1>Sign up</h1>
                 <p>Create your account</p>
+                <p>{error}</p>
                 <div>
                     <input
                         type="text"
@@ -83,25 +101,29 @@ function SignUpPage() {
                     <input
                         type="radio"
                         name="role"
-                        value="Consumer"
+                        value="consumer"
                         onChange={handleChange}
-                        checked={user.role === "Consumer"}
+                        checked={user.role === "consumer"}
                     />
                     <label htmlFor="css">consumer</label>
                     <input
                         type="radio"
                         name="role"
-                        value="Supplier"
+                        value="supplier"
                         onChange={handleChange}
-                        checked={user.role === "Supplier"}
+                        checked={user.role === "supplier"}
                     />
                     <label htmlFor="html">supplier</label>
                 </div>
                 <br />
                 <div>
-                    <button type="submit" name="save">
-                        Sign up
-                    </button>
+                    {isLoading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <button type="submit" name="save">
+                            Sign up
+                        </button>
+                    )}
                 </div>
                 <br />
                 <div>

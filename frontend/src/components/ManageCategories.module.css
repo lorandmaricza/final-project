@@ -1,0 +1,50 @@
+.wrapperDiv {
+    width: 50%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 25px;
+    background: #eae9e9;
+}
+
+.inputWrapper {
+    width: auto;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 25px;
+    background: #e1e0e0;
+}
+
+.buttons {
+    margin-left:  20px;
+}
+
+.buttonsWrapperDiv {
+    display: inline;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+h2 {
+    margin-left:  10px;
+}
+
+.inputCategory {
+    width: 30%;
+    margin-left:  20px;
+
+}
+
+table {
+    margin: 20px 0 0 20px;
+    border-collapse: collapse;
+    width: 50%;
+
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}

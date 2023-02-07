@@ -1,13 +1,19 @@
 <?php
-
 include 'database.php';
-include 'manage-list.php';
-
-$sql = "DELETE FROM listCategories WHERE category_id = ?";
+include 'cors.php';
 global $conn;
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $_GET['id']);
-$stmt->execute();
+$data = json_decode(file_get_contents('php://input'), true);
+$category_id = $data['category_id'];
 
-header('Location: manage-list.php');
+$sql = "DELETE FROM listCategories WHERE category_id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $category_id);
+try {
+    $stmt->execute();
+    echo json_encode(['status' => 'success', 'message' => 'Category successfully deleted']);
+} catch (Exception $e) {
+    echo json_encode(['status' => 'error', 'message' => $e]);
+}
+exit();
