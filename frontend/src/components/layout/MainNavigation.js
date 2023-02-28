@@ -3,25 +3,21 @@ import classes from './MainNavigation.module.css';
 import {useEffect, useState} from "react";
 import {checkSession} from "../../utils/helpers";
 
-// function MainNavigation(props) {
-function MainNavigation() {
+function MainNavigation(props) {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
         checkSession().then((data) => {
-            if (data.status === "logged_in") {
+            if (data.status === "logged_in" && !loggedIn) {
                 setLoggedIn(true);
             }
         }).catch(error => console.log(error));
     });
 
-    // console.log('mainNav: ' + props.loggedIn);
-
     return (
         <header className={classes.header}>
             <div className={classes.logo}><Link to='/'>FoodyMe</Link></div>
-            {/*{ !props.loggedIn &&*/}
-            { !loggedIn &&
+            { (!props.loggedIn || !loggedIn) &&
                 <nav>
                     <ul>
                         <li>

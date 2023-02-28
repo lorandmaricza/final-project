@@ -4,27 +4,17 @@ import { checkSession } from '../utils/helpers';
 
 
 function LandingPage () {
-    // const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // const handleLogin = () => {
-        //     setLoggedIn(!loggedIn);
-        //     console.log('landing: ' + loggedIn);
-        // }
 
         checkSession().then((data) => {
             if (data.status === "logged_in") {
-                // handleLogin();
                 navigate('/dashboard', { state: { userData: data.userData } });
             } else {
-                // needed?
-                // handleLogin();
                 navigate('/');
             }
         }).catch(error => console.log(error));
-
-    // }, [loggedIn, navigate]);
     }, [navigate]);
 
     return (

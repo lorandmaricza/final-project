@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import {Link, useNavigate} from "react-router-dom";
 
-function LoginPage() {
+export default function LoginPage(props) {
     const [user, setUser] = useState({
         email: "",
         password: ""
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState();
     const [error, setError] = useState("");
-    // const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = e => {
@@ -18,26 +17,21 @@ function LoginPage() {
         });
     };
 
-    // const handleLogin = () => {
-    //     console.log('login: ' + loggedIn);
-    //     setLoggedIn(true);
-    //     console.log('login: ' + loggedIn);
-    // }
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
         setIsLoading(true);
-        const response = await fetch("http://localhost:8888/final-project/backend/login.php", {
-            method: "POST",
-            mode: "cors",
-            credentials: 'include',
-            // headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user)
-        });
+        const response = await fetch(
+            "http://localhost:8888/final-project/backend/login.php",
+            {
+                method: "POST",
+                mode: "cors",
+                credentials: "include",
+                body: JSON.stringify(user)
+            });
         const data = await response.json();
         setIsLoading(false);
         if (data.status === "success") {
-            // handleLogin();
+            props.setLoggedIn(true);
             navigate('/dashboard', { state: { userData: data.userData } });
         } else {
             setError(data.message);
@@ -86,6 +80,4 @@ function LoginPage() {
         </div>
     );
 }
-
-export default LoginPage;
 

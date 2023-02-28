@@ -37,7 +37,7 @@ if($user) {
 
 $password = password_hash($password, PASSWORD_DEFAULT);
 $stmt = $conn->prepare($query2);
-$stmt->bind_param("sssss", $first_name, $last_name, $email, $password, $role);
+$stmt->bind_param('sssss', $first_name, $last_name, $email, $password, $role);
 if($stmt->execute()) {
     $userId = $conn->insert_id;
     $user['id'] = $userId;

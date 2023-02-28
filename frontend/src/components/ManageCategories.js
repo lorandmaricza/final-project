@@ -1,47 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import classes from './ManageCategories.module.css';
+import { fetchCategories } from '../utils/helpers';
 
 function ManageCategories() {
     const [categories, setCategories] = useState([]);
     const [inputCategory, setInputCategory] = useState("");
     const [updateCategoryId, setUpdateCategoryId] = useState(false);
+    const [error, setError] = useState("");
+    const [messsage, setMessage] = useState("");
 
     useEffect(() => {
-        async function fetchCategories() {
-            const response = await fetch('http://localhost:8888/final-project/backend/get-categories.php', {
-                method: "POST",
-                mode: "cors",
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! message: ${response.message}`);
-            }
-
-            const data = await response.json();
-            if (data.status === 'success') {
-                setCategories(data.categories);
-            } else {
-                console.log('sth wrong');
-            }
-        }
-
-        fetchCategories().catch(error => console.log(error));
-    }, [categories]);
+        fetchCategories(setCategories).catch(error => console.log(error));
+    }, []);
 
     const loadUpdateCategory = (categoryId, categoryName) => {
         setUpdateCategoryId(categoryId);
         setInputCategory(categoryName);
     }
 
-    const handleUpdateCategory = () => {
-        fetch('http://localhost:8888/final-project/backend/update-category.php', {
+    const handleUpdateCategory = async () => {
+        const response = await fetch('http://localhost:8888/final-project/backend/category/update-category.php', {
                     method: 'POST',
                     body: JSON.stringify({ updateCategoryId, inputCategory }),
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch((error) => console.log(error));
+                });
+        const data = await response.json();
+
+        if (data.status === "success") {
+            setMessage(data.message);
+        } else {
+            setError(data.message);
+        }
 
         setUpdateCategoryId(false);
     }
@@ -51,32 +39,42 @@ function ManageCategories() {
         setInputCategory('');
     }
 
-    const handleDeleteCategory = (category_id) => {
-        fetch('http://localhost:8888/final-project/backend/delete-category.php', {
+    const handleDeleteCategory = async (category_id) => {
+        const response = await fetch('http://localhost:8888/final-project/backend/category/delete-category.php', {
             method: 'POST',
             body: JSON.stringify({ category_id }),
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.log(error));
-    }
+        });
+        const data = await response.json();
 
-    const handleAddCategory = () => {
-        fetch("http://localhost:8888/final-project/backend/add-category.php", {
+        if (data.status === "success") {
+            setMessage(data.message);
+        } else {
+            setError(data.message);
+        }
+    };
+
+    const handleAddCategory = async () => {
+        const response = await fetch("http://localhost:8888/final-project/backend/category/add-category.php", {
             method: "POST",
             body: JSON.stringify({ categoryName: inputCategory }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setCategories([...categories]);
-                setInputCategory("");
-            })
-            .catch((error) => console.log(error));
+        });
+        const data = await response.json();
+
+        if (data.status === "success") {
+            setMessage(data.message);
+        } else {
+            setError(data.message);
+        }
+
+        setCategories([...categories]);
+        setInputCategory("");
     };
 
     return (
         <div className={classes.wrapperDiv}>
             <h2>Manage the available categories of grocery goods: </h2>
+            <p>{error}</p>
+            <p>{messsage}</p>
             <div className={classes.inputWrapper}>
                 <input
                     className={classes.inputCategory}

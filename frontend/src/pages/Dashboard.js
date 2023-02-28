@@ -1,11 +1,10 @@
 import React, {useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import ManageCategories from '../components/ManageCategories';
-// import Map1 from "../components/Map1";
-import Map2 from "../components/Map2";
+import Map from "../components/Map";
 
-export default function Dashboard() {
-    const {state} = useLocation();
+export default function Dashboard(props) {
+    const { state } = useLocation();
     const { userData } = state;
     const navigate = useNavigate();
     const [showManageCategoriesComponent, setShowManageCategoriesComponent] = useState(false);
@@ -40,9 +39,8 @@ export default function Dashboard() {
 
         const data = await response.json();
 
-        console.log(data);
-
         if (data.status === 'success') {
+            props.setLoggedIn(false);
             navigate('/');
         }
     }
@@ -62,8 +60,7 @@ export default function Dashboard() {
             <button onClick={handleLogout}>Log out</button>
 
             {showManageCategoriesComponent && <ManageCategories />}
-            {/*{showMapComponent && <Map1 />}*/}
-            {showMapComponent && <Map2 />}
+            {showMapComponent && <Map userData={userData}/>}
         </div>
     )
 }

@@ -21,7 +21,7 @@ function SignUpPage() {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
         setIsLoading(true);
         const response = await fetch("http://localhost:8888/final-project/backend/signup.php", {
@@ -38,7 +38,6 @@ function SignUpPage() {
             setError(data.message);
         }
     };
-
 
     return (
         <div className="signup-form">
