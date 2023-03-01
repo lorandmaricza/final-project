@@ -26,7 +26,6 @@ const fetchShops = async (setShops) => {
 };
 
 const saveShop = async (shop) => {
-    console.log(shop);
     try {
         await fetch(
             'http://localhost:8888/final-project/backend/shop/save-shop.php',
