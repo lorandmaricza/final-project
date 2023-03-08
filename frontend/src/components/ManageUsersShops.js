@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import classes from './ManageUsersShops.module.css';
 import ShopCategories from "./ShopCategories";
+import AddShopForm from "./AddShopForm";
 
 export default function ManageUsersShops(props) {
     const { userId } = props;
     const [shops, setShops] = useState([]);
     const [selectedShop, setSelectedShop] = useState(null);
+    const [showAddShopForm, setShowAddShopForm] = useState(false);
+    const [disableShowCategoriesButton, setDisableShowCategoriesButton] = useState(false);
 
     useEffect(() => {
         const fetchShops = async () => {
@@ -27,23 +30,37 @@ export default function ManageUsersShops(props) {
     }, [userId]);
 
     const handleShowShopsCategories = (shopId) => {
+        setDisableShowCategoriesButton(false);
         setSelectedShop(selectedShop === shopId ? null : shopId);
+    }
+
+    const handleManageClick = (shopId) => {
+        setDisableShowCategoriesButton(true);
+        setShowAddShopForm(showAddShopForm === shopId ? null : shopId);
+        setSelectedShop(null);
     }
 
     return (
         <div>
             <p>Shops:</p>
-            {shops && shops.map((shop) => (
+            {shops && shops.map((shop, index) => (
                 <div
                     onClick={() => props.setMapLocation([shop.lat, shop.lng])}
-                    key={shop.id}>
+                    key={index}>
                     <p>
                         {shop.address}
-                        <button onClick={() => handleShowShopsCategories(shop.id)} className={classes.buttons}>show categories</button>
-                        <button className={classes.buttons}>manage</button>
+                        <button
+                            onClick={() => handleShowShopsCategories(shop.id)}
+                            className={classes.buttons}
+                            disabled={disableShowCategoriesButton && selectedShop === shop.id}
+                        >
+                            show categories
+                        </button>
+                        <button onClick={() => handleManageClick(shop.id)} className={classes.buttons}>manage</button>
                     </p>
                     <div>
-                        {selectedShop === shop.id && <ShopCategories shopId={shop.id} />}
+                        {selectedShop === shop.id && !showAddShopForm && <ShopCategories shopId={shop.id} />}
+                        {showAddShopForm === shop.id && <AddShopForm shopId={shop.id}/>}
                     </div>
                 </div>
             ))}

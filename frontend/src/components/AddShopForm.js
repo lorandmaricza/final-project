@@ -1,20 +1,25 @@
 import React, {useEffect, useState} from "react";
 import classes from "./AddShopForm.module.css"
-import { fetchCategories } from '../utils/helpers';
+import {fetchCategories} from '../utils/helpers';
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function AddShopForm(props) {
     const [address, setAddress] = useState("");
     const [predictions, setPredictions] = useState([]);
     const [showPredictions, setShowPredictions] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [categoriesShop, setCategoriesShop] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
     const [isValid, setIsValid] = useState(false);
     const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
     const [isCancelClicked, setIsCancelClicked] = useState(false);
-    const API_KEY = "AIzaSyCK3Tz-DjsndZOpQ9lXOiGpWh3GmK-KvHw";
+    const [,setShop] = useState([]);
+    const API_KEY = "AIzaSyAfpIVTNfec1GFO09qxmwXbu9fGV8t4glk";
+    const isAdd = props.isAdd;
+    const shopId = props.shopId ?? null;
 
     useEffect(() => {
-        fetchCategories(setCategories).catch(error => console.log(error));
+        fetchCategories(setCategories).catch(() => {});
     }, []);
 
     useEffect(() => {
@@ -33,6 +38,32 @@ export default function AddShopForm(props) {
             setIsCancelClicked(false);
         }
     }, [isCancelClicked]);
+
+    useEffect(() => {
+         const fetchShops = async () => {
+             try {
+                const response = await fetch(
+                    `http://localhost:8888/final-project/backend/shop/get-shop.php`,
+                    {
+                        method: "POST",
+                        mode: "cors",
+                        credentials: "include",
+                        body: JSON.stringify({ shopId }),
+                    }
+                );
+                const data = await response.json();
+                setShop(data.shop);
+                setAddress(data.shop.address);
+                setCategoriesShop(data.categories);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (shopId !== null) {
+            fetchShops().then(() => {});
+        }
+    }, [shopId]);
 
     const isValidAddress = async (address) => {
         if (address === "") return false;
@@ -100,6 +131,10 @@ export default function AddShopForm(props) {
         setCheckedCategories(updatedList);
     };
 
+    if (!categoriesShop) {
+        return <LoadingSpinner />;
+    }
+
     return (
         <div className={classes.wrapperDiv}>
             <input
@@ -108,19 +143,22 @@ export default function AddShopForm(props) {
                 placeholder="Search for a location"
                 size="50"
             />
-            {showPredictions && (
-                <ul>
-                    {predictions.map((prediction) => (
-                        <li
-                            key={prediction.place_id}
-                            onClick={() => handleSelect(prediction.description)}
-                        >
-                            {prediction.description}
-                        </li>
-                    ))}
-                </ul>
-            )}
-            {categories.map((category) => (
+            {
+                showPredictions && (
+                    <ul>
+                        {predictions.map((prediction) => (
+                            <li
+                                key={prediction.place_id}
+                                onClick={() => handleSelect(prediction.description)}
+                            >
+                                {prediction.description}
+                            </li>
+                        ))}
+                    </ul>
+                )
+            }
+            {
+                categories.map((category) => (
                     <div>
                         <input
                             type="checkbox"
@@ -128,11 +166,15 @@ export default function AddShopForm(props) {
                             id={category[0]}
                             name={category[1]}
                             onChange={handleCategoryCheck}
+                            checked={categoriesShop.some((categoryShop) => categoryShop.id === parseInt(category[0]))}
                         />
                         <label htmlFor={category[1]}>{category[1]}</label>
                     </div>
-                ))}
-            <button onClick={handleAdd} disabled={isAddButtonDisabled}>Add</button>
+                ))
+            }
+            {
+                isAdd ? ( <button onClick={handleAdd} disabled={isAddButtonDisabled}>Add</button> ) : ( <button>Update</button> )
+            }
             <button onClick={handleCancel}>Cancel</button>
         </div>
     );

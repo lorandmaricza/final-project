@@ -133,7 +133,7 @@ export default function Map(props) {
     return (
         <div className={classes.wrapperDiv}>
             <button onClick={handleAddShop}>Add shop</button>
-            {showAddMarker && <AddShopForm onAdd={onAddMarker} />}
+            {showAddMarker && <AddShopForm isAdd={true} onAdd={onAddMarker} />}
             <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>
             {showUsersShops && <ManageUsersShops userId={userId} setMapLocation={setMapLocation}/>}
 
