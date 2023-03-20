@@ -3,8 +3,9 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import shop from '../assets/icons/shop.svg';
 import classes from "./Map.module.css";
-import AddShopForm from "./AddShopForm";
+import ManageShopForm from "./ManageShopForm";
 import ManageUsersShops from "./ManageUsersShops";
+import ShopFilter from "./ShopFilter";
 
 const zoom = 15;
 const lat = 47.49720000;
@@ -45,7 +46,7 @@ export default function Map(props) {
     const [showAddMarker, setShowAddMarker] = useState(false);
     const [showUsersShops, setShowUsersShops] = useState(false);
     const mapRef = useRef(null);
-    const { id: userId } = props.userData;
+    const { id: userId, role_id: roleId} = props.userData;
     const [mapLocation, setMapLocation] = useState([lat, lng]);
 
     const handleAddShop = () => {
@@ -56,9 +57,9 @@ export default function Map(props) {
         setShowUsersShops(!showUsersShops);
     }
 
-    const onAddMarker = async (marker) => {
-        const shop = {...marker, userId};
-        await saveShop(shop);
+    const onAddShop = async (shop) => {
+        const shopToSave = {...shop, userId};
+        await saveShop(shopToSave);
         await fetchShops(setShops);
     };
 
@@ -130,14 +131,19 @@ export default function Map(props) {
         }
     }, [shops]);
 
+    const onFilterChange = (shop) => {
+        console.log(shop);
+    }
+
     return (
         <div className={classes.wrapperDiv}>
-            <button onClick={handleAddShop}>Add shop</button>
-            {showAddMarker && <AddShopForm isAdd={true} onAdd={onAddMarker} />}
-            <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>
+            {roleId === 2 && <button onClick={handleAddShop}>Add shop</button>}
+            {showAddMarker && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
+            {roleId === 2 && <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>}
             {showUsersShops && <ManageUsersShops userId={userId} setMapLocation={setMapLocation}/>}
+            {roleId === 1 && <ShopFilter onChange={onFilterChange}/>}
 
-            <div id="map" style={{height: "400px", width: "100%", margin: "20px 0"}}></div>
+            <div id="map" style={{height: "400px", width: "100%", margin: "20px 0", zIndex: -1}}></div>
         </div>
     );
 };

@@ -56,6 +56,9 @@ export default function Dashboard(props) {
                 <button onClick={handleManageList}>Manage categories</button>}
             {userData.role_id === 2 &&
                 <button onClick={handleManageMap}>Manage map</button>}
+            {userData.role_id === 1 &&
+                <button onClick={handleManageMap}>Show Map</button>
+            }
 
             <button onClick={handleLogout}>Log out</button>
 

@@ -16,7 +16,6 @@ while ($row = $result->fetch_assoc()) {
         'id' => $row['id'],
         'lat' => $row['lat'],
         'lng' => $row['lng'],
-        'information' => $row['information'],
         'address' => $row['address'],
         'user_id' => $row['user_id']
     );

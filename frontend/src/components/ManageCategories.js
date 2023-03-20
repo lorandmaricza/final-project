@@ -7,11 +7,11 @@ function ManageCategories() {
     const [inputCategory, setInputCategory] = useState("");
     const [updateCategoryId, setUpdateCategoryId] = useState(false);
     const [error, setError] = useState("");
-    const [messsage, setMessage] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         fetchCategories(setCategories).catch(error => console.log(error));
-    }, []);
+    }, [categories]);
 
     const loadUpdateCategory = (categoryId, categoryName) => {
         setUpdateCategoryId(categoryId);
@@ -74,7 +74,7 @@ function ManageCategories() {
         <div className={classes.wrapperDiv}>
             <h2>Manage the available categories of grocery goods: </h2>
             <p>{error}</p>
-            <p>{messsage}</p>
+            <p>{message}</p>
             <div className={classes.inputWrapper}>
                 <input
                     className={classes.inputCategory}
