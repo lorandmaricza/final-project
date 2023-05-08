@@ -41,3 +41,18 @@
 .header a.active {
     color: white;
 }
+
+.menu {
+    width: 35px;
+    height: 35px;
+}
+
+.menuClose {
+    width: 28px;
+    height: 28px;
+    padding-right: 3px;
+}
+
+.menuButton:hover {
+    background-color: transparent;
+}

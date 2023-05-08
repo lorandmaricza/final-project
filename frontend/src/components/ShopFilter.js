@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import styles from './ShopFilter.module.scss';
+import classes from "./ManageUsersShops.module.css";
+import ShopCategories from "./ShopCategories";
 
-export default function ShopFilter({ onChange }) {
+export default function ShopFilter(props) {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [distance, setDistance] = useState(1);
+    const [shops, setShops] = useState([]);
+    const { currentLocation } = props;
+    const [selectedShop, setSelectedShop] = useState(null);
+    const [disableShowCategoriesButton, setDisableShowCategoriesButton] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -21,8 +28,31 @@ export default function ShopFilter({ onChange }) {
         fetchCategories().then(() => {});
     }, []);
 
+    useEffect(() => {
+        const fetchFilteredShops = async () => {
+            const response = await fetch(
+                'http://localhost:8888/final-project/backend/shop/get-filtered-shops.php',
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        distance,
+                        categories: selectedCategories,
+                        lat: currentLocation.lat,
+                        lng: currentLocation.lng,
+                    }),
+                }
+            );
+            const data = await response.json();
+            setShops(data.shops);
+        };
+
+        fetchFilteredShops().then(() => {});
+    }, [distance, selectedCategories]);
+
     const handleCategoryChange = (selectedOptions) => {
-        const values = selectedOptions.map((option) => option.value);
+        const values = selectedOptions.map((option) => parseInt(option.value));
         setSelectedCategories(values);
     };
 
@@ -30,26 +60,53 @@ export default function ShopFilter({ onChange }) {
         setDistance(event.target.value);
     };
 
-    const handleFilterClick = () => {
-        onChange({ distance, categories: selectedCategories });
+    const handleShowShopsCategories = (shopId) => {
+        setDisableShowCategoriesButton(false);
+        setSelectedShop(selectedShop === shopId ? null : shopId);
     }
 
     return (
-        <div>
-            <label>Kilometer Range Filter:</label>
-            <input type="range" min="1" max="10" value={distance} onChange={handleDistanceChange} />
-            <span>{distance} km</span>
-            <br />
-            <Select
-                isMulti
-                placeholder={'Select categories...'}
-                options={categories}
-                onChange={handleCategoryChange}
-                value={categories.filter((option) =>
-                    selectedCategories.includes(option.value)
-                )}
-            />
-            <button onClick={handleFilterClick}>Filter</button>
+        <div className={styles.filterDivWrapper}>
+            <div className={styles.distDivWrapper}>
+                <label>distance:</label>
+                <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={distance}
+                    onChange={handleDistanceChange}
+                />
+                <span>{distance} km</span>
+            </div>
+            {categories.length > 0 ? (
+                <Select
+                    isMulti
+                    placeholder={'Select categories...'}
+                    options={categories}
+                    onChange={handleCategoryChange}
+                    value={categories.filter((option) =>
+                        selectedCategories.includes(parseInt(option.value))
+                    )}
+                />
+            ) : null}
+            {shops && shops.map((shop, index) => (
+                <div
+                    onClick={() => props.setMapLocation([shop.lat, shop.lng])}
+                    key={index}>
+                    <p>
+                        {shop.address}
+                        <button
+                            onClick={() => handleShowShopsCategories(shop.id)}
+                            disabled={disableShowCategoriesButton && selectedShop === shop.id}
+                        >
+                            show categories
+                        </button>
+                    </p>
+                    <div className={classes.wrapper}>
+                        {selectedShop === shop.id && <ShopCategories shopId={shop.id} />}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }

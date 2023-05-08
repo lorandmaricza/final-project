@@ -1,6 +1,6 @@
 .wrapperDiv {
-    width: 50%;
-    margin: 10px 0;
+    width: 70%;
+    margin: 10px auto;
     padding: 10px;
     border-radius: 25px;
     background: #eae9e9;
@@ -9,9 +9,13 @@
 .inputWrapper {
     width: auto;
     margin: 10px 0;
-    padding: 10px;
+    padding: 15px 10px 10px;
     border-radius: 25px;
     background: #e1e0e0;
+
+    input {
+        width: 60%;
+    }
 }
 
 .buttons {
@@ -33,18 +37,20 @@ h2, p {
 .inputCategory {
     width: 30%;
     margin-left:  20px;
-
+    max-width: none;
 }
 
 table {
-    margin: 20px 0 0 20px;
     border-collapse: collapse;
-    width: 50%;
-
+    width: 100%;
 }
 
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+
+    &:first-child {
+        width: 30%;
+    }
 }

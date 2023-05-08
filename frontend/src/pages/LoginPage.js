@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import {Link, useNavigate} from "react-router-dom";
+import './LoginPage.module.css';
 
 export default function LoginPage(props) {
     const [user, setUser] = useState({
         email: "",
         password: ""
     });
-    const [isLoading, setIsLoading] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
@@ -73,10 +74,11 @@ export default function LoginPage(props) {
                         </button>
                     )}
                 </div>
+                <br />
+                <div>
+                    Don't have an account? <Link to='/signup'>Sign up</Link>
+                </div>
             </form>
-            <p>
-                Don't have an account? <Link to='/signup'>Sign up</Link>
-            </p>
         </div>
     );
 }

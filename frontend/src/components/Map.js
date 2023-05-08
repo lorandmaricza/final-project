@@ -16,16 +16,6 @@ const shopIcon = L.icon({
     iconSize: [50, 50]
 });
 
-const fetchShops = async (setShops) => {
-    try {
-        const response = await fetch('http://localhost:8888/final-project/backend/shop/get-shops.php');
-        const data = await response.json();
-        setShops(data.shops);
-    } catch (error) {
-        console.error(error);
-    }
-};
-
 const saveShop = async (shop) => {
     try {
         await fetch(
@@ -41,16 +31,26 @@ const saveShop = async (shop) => {
     }
 };
 
+const fetchShops = async (setShops) => {
+    try {
+        const response = await fetch('http://localhost:8888/final-project/backend/shop/get-shops.php');
+        const data = await response.json();
+        setShops(data.shops);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 export default function Map(props) {
     const [shops, setShops] = useState([]);
-    const [showAddMarker, setShowAddMarker] = useState(false);
+    const [showAddShop, setShowAddShop] = useState(false);
     const [showUsersShops, setShowUsersShops] = useState(false);
     const mapRef = useRef(null);
     const { id: userId, role_id: roleId} = props.userData;
     const [mapLocation, setMapLocation] = useState([lat, lng]);
 
     const handleAddShop = () => {
-        setShowAddMarker(!showAddMarker);
+        setShowAddShop(!showAddShop);
     };
 
     const handleGetUsersShops = () => {
@@ -91,6 +91,9 @@ export default function Map(props) {
 
                     container.addEventListener("click", function () {
                         map.locate({ setView: true, maxZoom: 16 });
+                        map.on("locationfound", function (e) {
+                            setMapLocation([e.latlng.lat, e.latlng.lng]);
+                        });
                     });
 
                     return container;
@@ -120,8 +123,6 @@ export default function Map(props) {
             shops.forEach((location) => {
                 const latLng = L.latLng(location.lat, location.lng);
                 const marker = L.marker(latLng, {
-                    // draggable: true,
-                    // autoPan: true,
                     icon: shopIcon,
                 }).addTo(mapRef.current);
                 if (location.information) {
@@ -131,19 +132,22 @@ export default function Map(props) {
         }
     }, [shops]);
 
-    const onFilterChange = (shop) => {
-        console.log(shop);
-    }
-
     return (
-        <div className={classes.wrapperDiv}>
+        <div>
             {roleId === 2 && <button onClick={handleAddShop}>Add shop</button>}
-            {showAddMarker && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
+            {showAddShop && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
             {roleId === 2 && <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>}
             {showUsersShops && <ManageUsersShops userId={userId} setMapLocation={setMapLocation}/>}
-            {roleId === 1 && <ShopFilter onChange={onFilterChange}/>}
+            {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setMapLocation={setMapLocation}/>}
 
-            <div id="map" style={{height: "400px", width: "100%", margin: "20px 0", zIndex: -1}}></div>
+            <div className={classes.mapWrapperDiv}>
+                <div id="map" style={{
+                    height: "500px",
+                    width: "100%",
+                    borderRadius: "22px",
+                    zIndex: 0
+                }}></div>
+            </div>
         </div>
     );
 };

@@ -1,0 +1,22 @@
+.filterDivWrapper {
+    width: 50%;
+    height: 50%;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.distDivWrapper {
+    margin-bottom: 10px;
+
+    label {
+        margin-right: 10px;
+    }
+    
+    span {
+        margin-left: 10px;
+    }
+
+    input {
+        width: 50%;
+    }
+}

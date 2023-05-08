@@ -1,69 +1,37 @@
-import React, {useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import ManageCategories from '../components/ManageCategories';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import ManageCategories from "../components/ManageCategories";
 import Map from "../components/Map";
 
-export default function Dashboard(props) {
+export default function Dashboard() {
     const { state } = useLocation();
     const { userData } = state;
-    const navigate = useNavigate();
-    const [showManageCategoriesComponent, setShowManageCategoriesComponent] = useState(false);
-    const [showMapComponent, setShowMapComponent] = useState(false);
+    const [currentLocation, setCurrentLocation] = useState(null);
 
-    const getRole = (roleId) => {
-        let role;
-        switch (roleId) {
-            case 1: role = "consumer"; break;
-            case 2: role = "supplier"; break;
-            default: role = "admin";
-        }
-        return role;
-    }
-
-    const handleManageList = () => {
-        setShowManageCategoriesComponent(!showManageCategoriesComponent);
-    }
-
-    const handleManageMap = () => {
-        setShowMapComponent(!showMapComponent)
-    }
-
-    const handleLogout = async () => {
-        const response = await fetch("http://localhost:8888/final-project/backend/logout.php", {
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! message: ${response.message}`);
-        }
-
-        const data = await response.json();
-
-        if (data.status === 'success') {
-            props.setLoggedIn(false);
-            navigate('/');
-        }
-    }
-
-    return (
-        <div>
-            <h1>Welcome {userData.first_name}</h1>
-            <p>Email: {userData.email}</p>
-            <p>Name: {userData.first_name} {userData.last_name}</p>
-            <p>Role: {getRole(userData.role_id)}</p>
-
-            {userData.role_id === 3 &&
-                <button onClick={handleManageList}>Manage categories</button>}
-            {userData.role_id === 2 &&
-                <button onClick={handleManageMap}>Manage map</button>}
-            {userData.role_id === 1 &&
-                <button onClick={handleManageMap}>Show Map</button>
+    useEffect(() => {
+        const fetchCurrentLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setCurrentLocation({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        });
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
             }
+        };
+        fetchCurrentLocation();
+    }, []);
 
-            <button onClick={handleLogout}>Log out</button>
-
-            {showManageCategoriesComponent && <ManageCategories />}
-            {showMapComponent && <Map userData={userData}/>}
-        </div>
-    )
+    if (userData.role_id === 3) {
+        return <ManageCategories />;
+    } else if (userData.role_id === 1 || userData.role_id === 2) {
+        return <Map userData={userData} currentLocation={currentLocation} />;
+    } else {
+        return null;
+    }
 }

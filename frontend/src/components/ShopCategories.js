@@ -23,7 +23,7 @@ export default function ShopCategories({ shopId }) {
         };
 
         fetchCategories().then(() => {});
-    }, [categories, shopId]);
+    }, [shopId]);
 
     return (
         <ul>

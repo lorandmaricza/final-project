@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import classes from './ManageCategories.module.css';
+import classes from './ManageCategories.module.scss';
 import { fetchCategories } from '../utils/helpers';
 
 function ManageCategories() {
@@ -77,6 +77,7 @@ function ManageCategories() {
             <p>{message}</p>
             <div className={classes.inputWrapper}>
                 <input
+                    type="text"
                     className={classes.inputCategory}
                     placeholder='category'
                     value={inputCategory}

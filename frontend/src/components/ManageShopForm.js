@@ -127,6 +127,7 @@ export default function ManageShopForm(props) {
     };
 
     const handleAddShop = async () => {
+        console.log('szoszi');
         let data;
         try {
             const response = await fetch(
@@ -147,7 +148,7 @@ export default function ManageShopForm(props) {
     }
 
     const handleDelete = () => {
-        props.onDeleteShop({shopId, checkedCategories});
+        props.onDeleteShop({shopId});
     }
 
     const handleUpdateAddress = async () => {
@@ -164,6 +165,7 @@ export default function ManageShopForm(props) {
 
         props.onUpdateAddress({shopId, address, lat, lng});
     }
+
     const handleUpdateCategory = async () => {
         props.onUpdateCategory({shopId, checkedCategories});
     }
@@ -176,7 +178,6 @@ export default function ManageShopForm(props) {
             updatedList.splice(checkedCategories.indexOf(e.target.id), 1);
         }
         setCheckedCategories(updatedList);
-        console.log(checkedCategories);
 
         let initialList = shopCategories.every((category) => updatedList.includes(category.id.toString()));
         if (initialList) {
@@ -193,6 +194,7 @@ export default function ManageShopForm(props) {
     return (
         <div className={classes.wrapperDiv}>
             <input
+                type="text"
                 value={address}
                 onChange={handleChange}
                 placeholder="Search for a location"
@@ -203,9 +205,10 @@ export default function ManageShopForm(props) {
             }
             {
                 showPredictions && (
-                    <ul>
+                    <ul className={classes.autocomplete}>
                         {predictions.map((prediction) => (
                             <li
+                                className={classes.autocompleteItems}
                                 key={prediction.place_id}
                                 onClick={() => handleSelect(prediction.description)}
                             >

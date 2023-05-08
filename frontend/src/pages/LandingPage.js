@@ -1,13 +1,13 @@
 import React, {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import { checkSession } from '../utils/helpers';
+import classes from './LandingPage.module.css';
 
 
 function LandingPage () {
     const navigate = useNavigate();
 
     useEffect(() => {
-
         checkSession().then((data) => {
             if (data.status === "logged_in") {
                 navigate('/dashboard', { state: { userData: data.userData } });
@@ -18,12 +18,10 @@ function LandingPage () {
     }, [navigate]);
 
     return (
-        <div>
-            <h1>Landing Page</h1>
-            <p>some description about the application...</p>
-            <button onClick={() => {
-                navigate('/login');
-            }}>Log in</button>
+        <div className={classes.wrapperDiv}>
+            <div className={classes.imgDivWrapper}>
+                <div className={classes.imgDiv}></div>
+            </div>
         </div>
     );
 }

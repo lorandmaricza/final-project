@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {Link, useNavigate} from "react-router-dom";
+import styles from './LoginPage.module.css';
 
 function SignUpPage() {
     const [user, setUser] = useState({
@@ -97,22 +98,26 @@ function SignUpPage() {
                 </div>
                 <br />
                 <div>
-                    <input
-                        type="radio"
-                        name="role"
-                        value="consumer"
-                        onChange={handleChange}
-                        checked={user.role === "consumer"}
-                    />
-                    <label htmlFor="css">consumer</label>
-                    <input
-                        type="radio"
-                        name="role"
-                        value="supplier"
-                        onChange={handleChange}
-                        checked={user.role === "supplier"}
-                    />
-                    <label htmlFor="html">supplier</label>
+                    <div className={styles.radioWrapperDiv}>
+                        <label htmlFor="css">consumer</label>
+                        <input
+                            type="radio"
+                            name="role"
+                            value="consumer"
+                            onChange={handleChange}
+                            checked={user.role === "consumer"}
+                        />
+                    </div>
+                    <div className={styles.radioWrapperDiv}>
+                        <label htmlFor="html">supplier</label>
+                        <input
+                            type="radio"
+                            name="role"
+                            value="supplier"
+                            onChange={handleChange}
+                            checked={user.role === "supplier"}
+                        />
+                    </div>
                 </div>
                 <br />
                 <div>
