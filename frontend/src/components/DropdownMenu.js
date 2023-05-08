@@ -1,18 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import classes from "./DropdownMenu.module.scss";
 import {useNavigate} from "react-router-dom";
-import {checkSession} from "../utils/helpers";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function DropdownMenu(props) {
     const navigate = useNavigate();
-    const [roleId, setRoleId] = useState(null);
-
-    useEffect(() => {
-        checkSession().then((data) => {
-            setRoleId(data.userData.role_id);
-        }).catch(error => console.log(error));
-    }, []);
 
     const handleUserIconClick = () => {
         props.closeMenu();

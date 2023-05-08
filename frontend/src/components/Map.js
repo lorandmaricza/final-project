@@ -27,14 +27,9 @@ const fetchShops = async (setShops) => {
 
 export default function Map(props) {
     const [shops, setShops] = useState([]);
-    const [showUsersShopsComponent, setShowUsersShopsComponent] = useState(false);
     const mapRef = useRef(null);
     const { id: userId, role_id: roleId} = props.userData;
     const [mapLocation, setMapLocation] = useState([lat, lng]);
-
-    const handleGetUsersShops = () => {
-        setShowUsersShopsComponent(!showUsersShopsComponent);
-    }
 
     useEffect(() => {
         let map;
@@ -106,9 +101,8 @@ export default function Map(props) {
     }, [shops]);
 
     return (
-        <div>
-            {roleId === 2 && <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>}
-            {showUsersShopsComponent && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
+        <div className={classes.wrapperDiv}>
+            {roleId === 2 && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
             {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setMapLocation={setMapLocation}/>}
 
             <div className={classes.mapWrapperDiv}>

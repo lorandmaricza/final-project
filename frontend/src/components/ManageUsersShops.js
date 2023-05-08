@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import classes from './ManageUsersShops.module.css';
 import ShopCategories from "./ShopCategories";
 import ManageShopForm from "./ManageShopForm";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const saveShop = async (shop) => {
     try {
@@ -36,8 +37,6 @@ export default function ManageUsersShops(props) {
     const [disableShowCategoriesButton, setDisableShowCategoriesButton] = useState(false);
     const [shopDeleted, setShopDeleted] = useState(false);
     const [shopChanged, setShopChanged] = useState(false);
-    const [, setError] = useState("");
-    const [, setMessage] = useState("");
     const [showAddShopComponent, setShowAddShopComponent] = useState(false);
 
     useEffect(() => {
@@ -111,6 +110,18 @@ export default function ManageUsersShops(props) {
             });
 
             file = 'category/update-shop-categories';
+        } else if (updated === 'name') {
+            updatedShops = shops.map((userShop) => {
+                if (userShop.id === shop.id) {
+                    return {
+                        ...userShop,
+                        name: shop.name,
+                    };
+                }
+                return userShop;
+            });
+
+            file = 'shop/update-shop-name';
         }
 
         if (file) {
@@ -148,55 +159,48 @@ export default function ManageUsersShops(props) {
             console.error(error);
         }
     }
-    const onUpdateCategory = async (shop) => {
-        console.log(shop);
 
+    const onUpdateShopName = async (shop) => {
+        const updated = 'name';
+        await updateUserShops(shop, updated);
+    }
+
+    const onUpdateCategory = async (shop) => {
         const updated = 'categories';
         await updateUserShops(shop, updated);
     }
 
-    const onDeleteShop = async (shopId) => {
-        const response = await fetch('http://localhost:8888/final-project/backend/shop/delete-shop.php', {
-            method: 'POST',
-            body: JSON.stringify({ shopId }),
-        });
-        const data = await response.json();
-
-        if (data.status === "success") {
-            setMessage(data.message);
-            setShopDeleted(true);
-        } else {
-            setError(data.message);
-        }
+    const onDeleteShop = () => {
+        setShopDeleted(!shopDeleted);
     }
 
     return (
-        <div>
-            {roleId === 2 && <button onClick={handleAddShop}>Add shop</button>}
-            {showAddShopComponent && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
-
-            <p>Shops:</p>
+        <div className={classes.componentWrapperDiv}>
+            <h2>List of your shops:</h2>
             {shops && shops.map((shop, index) => (
                 <div
                     onClick={() => props.setMapLocation([shop.lat, shop.lng])}
-                    key={index}>
-                    <p>
+                    key={index}
+                    className={classes.shopWrapperDiv}>
+                    <p className={classes.shop}>
                         {shop.address}
                         <button
                             onClick={() => handleShowShopsCategories(shop.id)}
                             className={classes.buttons}
                             disabled={disableShowCategoriesButton && selectedShop === shop.id}
                         >
-                            show categories
+                            categories
                         </button>
                         <button onClick={() => handleManageClick(shop.id)} className={classes.buttons}>manage</button>
                     </p>
-                    <div className={classes.wrapper}>
+                    <div className={classes.dropdownWrapper}>
                         {selectedShop === shop.id && !showAddShopForm && <ShopCategories shopId={shop.id} />}
-                        {showAddShopForm === shop.id && <ManageShopForm shopId={shop.id} onUpdateAddress={onUpdateAddress} onUpdateCategory={onUpdateCategory} onDeleteShop={onDeleteShop}/>}
+                        {showAddShopForm === shop.id && <ManageShopForm shopId={shop.id} onUpdateAddress={onUpdateAddress} onUpdateShopName={onUpdateShopName} onUpdateCategory={onUpdateCategory} onDeleteShop={onDeleteShop}/>}
                     </div>
                 </div>
             ))}
+            {roleId === 2 && <AddCircleIcon className={classes.addIcon} onClick={handleAddShop}></AddCircleIcon>}
+            {showAddShopComponent && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
         </div>
     );
 }

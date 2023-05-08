@@ -6,20 +6,23 @@ import stringSimilarity from "string-similarity";
 
 export default function ManageShopForm(props) {
     const [address, setAddress] = useState("");
+    const [initialAddress, setInitialAddress] = useState("");
+    const [isUpdateAddressButtonDisabled, setIsUpdateAddressButtonDisabled] = useState(true);
+    const [shopName, setShopName] = useState("");
+    const [initialShopName, setInitialShopName] = useState("");
+    const [isUpdateShopNameButtonDisabled, setIsUpdateShopNameButtonDisabled] = useState(true);
     const [predictions, setPredictions] = useState([]);
     const [showPredictions, setShowPredictions] = useState(true);
     const [categories, setCategories] = useState([]);
     const [shopCategories, setShopCategories] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
     const [checkedCategoriesAreInitial, setCheckedCategoriesAreInitial] = useState(true);
-    const [initialAddress, setInitialAddress] = useState("");
     const [isValid, setIsValid] = useState(false);
     const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
     const [isUpdateCategoriesButtonDisabled, setIsUpdateCategoriesButtonDisabled] = useState(true);
-    const [isUpdateAddressButtonDisabled, setIsUpdateAddressButtonDisabled] = useState(true);
     const [isCancelButtonClicked, setIsCancelButtonClicked] = useState(false);
     const [,setShop] = useState([]);
-    const API_KEY = "...";
+    const API_KEY = "AIzaSyCQ93JMDcbEtU61ljoXD6-MW6yPIbfDfSo";
     const isAdd = props.isAdd;
     const shopId = props.shopId ?? null;
 
@@ -45,6 +48,11 @@ export default function ManageShopForm(props) {
     } , [address, initialAddress, isValid]);
 
     useEffect(() => {
+        const isShopNameInitial = shopName.trim() === initialShopName;
+        setIsUpdateShopNameButtonDisabled(isShopNameInitial);
+    } , [initialShopName, shopName]);
+
+    useEffect(() => {
         if (isCancelButtonClicked) {
             setCheckedCategories([]);
             const checkboxes = document.querySelectorAll(`input[type="checkbox"]`);
@@ -68,6 +76,8 @@ export default function ManageShopForm(props) {
                 const data = await response.json();
                 setShop(data.shop);
                 setAddress(data.shop.address);
+                setShopName(data.shop.name);
+                setInitialShopName(data.shop.name);
                 setInitialAddress(data.shop.address);
                 setShopCategories(data.categories);
                 return data.categories;
@@ -111,7 +121,7 @@ export default function ManageShopForm(props) {
         setShowPredictions(false);
     };
 
-    const handleChange = async e => {
+    const handleAddressChange = async e => {
         setAddress(e.target.value);
         setShowPredictions(true);
         let data;
@@ -126,6 +136,10 @@ export default function ManageShopForm(props) {
         setPredictions(data.predictions);
     };
 
+    const handleShopNameChange = async e => {
+        setShopName(e.target.value);
+    }
+
     const handleAddShop = async () => {
         let data;
         try {
@@ -138,7 +152,7 @@ export default function ManageShopForm(props) {
         }
         let { lat, lng } = data.results[0].geometry.location;
 
-        props.onAddShop({lat, lng, address, checkedCategories});
+        props.onAddShop({lat, lng, address, checkedCategories, shopName});
     };
 
     const handleCancel = () => {
@@ -146,8 +160,18 @@ export default function ManageShopForm(props) {
         setIsCancelButtonClicked(true);
     }
 
-    const handleDelete = () => {
-        props.onDeleteShop({shopId});
+    const handleDelete = async () => {
+        try {
+            const response = await fetch('http://localhost:8888/final-project/backend/shop/delete-shop.php', {
+                method: 'POST',
+                body: JSON.stringify({ shopId }),
+            });
+            await response.json();
+
+            props.onDeleteShop();
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     const handleUpdateAddress = async () => {
@@ -163,6 +187,10 @@ export default function ManageShopForm(props) {
         let { lat, lng } = data.results[0].geometry.location;
 
         props.onUpdateAddress({shopId, address, lat, lng});
+    }
+
+    const handleUpdateShopName = async () => {
+        props.onUpdateShopName({shopId, shopName});
     }
 
     const handleUpdateCategory = async () => {
@@ -198,12 +226,22 @@ export default function ManageShopForm(props) {
             <input
                 type="text"
                 value={address}
-                onChange={handleChange}
+                onChange={handleAddressChange}
                 placeholder="Search for a location"
                 size="50"
             />
             {
                 !isAdd && ( <button onClick={handleUpdateAddress} disabled={isUpdateAddressButtonDisabled}>Update address</button> )
+            }
+            <input
+                type="text"
+                value={shopName}
+                onChange={handleShopNameChange}
+                placeholder="Name of the shop"
+                size="50"
+            />
+            {
+                !isAdd && ( <button onClick={handleUpdateShopName} disabled={isUpdateShopNameButtonDisabled}>Update name</button> )
             }
             {
                 showPredictions && (

@@ -9,7 +9,8 @@ $shop_id = $data['shopId'];
 $sql = "DELETE FROM shops WHERE id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $shop_id );
+$stmt->bind_param('i', $shop_id);
+
 try {
     $stmt->execute();
     echo json_encode(['status' => 'success', 'message' => 'Shop successfully deleted']);
