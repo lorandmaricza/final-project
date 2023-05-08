@@ -127,7 +127,6 @@ export default function ManageShopForm(props) {
     };
 
     const handleAddShop = async () => {
-        console.log('szoszi');
         let data;
         try {
             const response = await fetch(
@@ -179,8 +178,11 @@ export default function ManageShopForm(props) {
         }
         setCheckedCategories(updatedList);
 
-        let initialList = shopCategories.every((category) => updatedList.includes(category.id.toString()));
-        if (initialList) {
+        let isListInitial = updatedList.every((categoryId) =>
+            shopCategories.some((category) => category.id.toString() === categoryId)
+        ) && updatedList.length === shopCategories.length;
+
+        if (isListInitial) {
             setCheckedCategoriesAreInitial(true);
         } else {
             setCheckedCategoriesAreInitial(false);
