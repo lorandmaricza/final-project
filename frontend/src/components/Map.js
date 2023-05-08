@@ -3,7 +3,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import shop from '../assets/icons/shop.svg';
 import classes from "./Map.module.css";
-import ManageShopForm from "./ManageShopForm";
 import ManageUsersShops from "./ManageUsersShops";
 import ShopFilter from "./ShopFilter";
 
@@ -15,21 +14,6 @@ const shopIcon = L.icon({
     iconUrl: shop,
     iconSize: [50, 50]
 });
-
-const saveShop = async (shop) => {
-    try {
-        await fetch(
-            'http://localhost:8888/final-project/backend/shop/save-shop.php',
-            {
-                method: 'POST',
-                mode: "cors",
-                credentials: "include",
-                body: JSON.stringify(shop)
-            });
-    } catch (error) {
-        console.error(error);
-    }
-};
 
 const fetchShops = async (setShops) => {
     try {
@@ -43,25 +27,14 @@ const fetchShops = async (setShops) => {
 
 export default function Map(props) {
     const [shops, setShops] = useState([]);
-    const [showAddShop, setShowAddShop] = useState(false);
-    const [showUsersShops, setShowUsersShops] = useState(false);
+    const [showUsersShopsComponent, setShowUsersShopsComponent] = useState(false);
     const mapRef = useRef(null);
     const { id: userId, role_id: roleId} = props.userData;
     const [mapLocation, setMapLocation] = useState([lat, lng]);
 
-    const handleAddShop = () => {
-        setShowAddShop(!showAddShop);
-    };
-
     const handleGetUsersShops = () => {
-        setShowUsersShops(!showUsersShops);
+        setShowUsersShopsComponent(!showUsersShopsComponent);
     }
-
-    const onAddShop = async (shop) => {
-        const shopToSave = {...shop, userId};
-        await saveShop(shopToSave);
-        await fetchShops(setShops);
-    };
 
     useEffect(() => {
         let map;
@@ -134,10 +107,8 @@ export default function Map(props) {
 
     return (
         <div>
-            {roleId === 2 && <button onClick={handleAddShop}>Add shop</button>}
-            {showAddShop && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
             {roleId === 2 && <button onClick={handleGetUsersShops} className={classes.btn}>My shop(s)</button>}
-            {showUsersShops && <ManageUsersShops userId={userId} setMapLocation={setMapLocation}/>}
+            {showUsersShopsComponent && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
             {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setMapLocation={setMapLocation}/>}
 
             <div className={classes.mapWrapperDiv}>

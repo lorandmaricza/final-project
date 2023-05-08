@@ -3,8 +3,33 @@ import classes from './ManageUsersShops.module.css';
 import ShopCategories from "./ShopCategories";
 import ManageShopForm from "./ManageShopForm";
 
+const saveShop = async (shop) => {
+    try {
+        await fetch(
+            'http://localhost:8888/final-project/backend/shop/save-shop.php',
+            {
+                method: 'POST',
+                mode: "cors",
+                credentials: "include",
+                body: JSON.stringify(shop)
+            });
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const fetchShops = async (setShops) => {
+    try {
+        const response = await fetch('http://localhost:8888/final-project/backend/shop/get-shops.php');
+        const data = await response.json();
+        setShops(data.shops);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 export default function ManageUsersShops(props) {
-    const { userId } = props;
+    const { userId, roleId } = props;
     const [shops, setShops] = useState([]);
     const [selectedShop, setSelectedShop] = useState(null);
     const [showAddShopForm, setShowAddShopForm] = useState(false);
@@ -13,6 +38,7 @@ export default function ManageUsersShops(props) {
     const [shopChanged, setShopChanged] = useState(false);
     const [, setError] = useState("");
     const [, setMessage] = useState("");
+    const [showAddShopComponent, setShowAddShopComponent] = useState(false);
 
     useEffect(() => {
         const fetchShops = async () => {
@@ -34,6 +60,16 @@ export default function ManageUsersShops(props) {
         fetchShops().then(() => {});
         setShopDeleted(false);
     }, [userId, shopDeleted, shopChanged]);
+
+    const handleAddShop = () => {
+        setShowAddShopComponent(!showAddShopComponent);
+    };
+
+    const onAddShop = async (shop) => {
+        const shopToSave = {...shop, userId};
+        await saveShop(shopToSave);
+        await fetchShops(setShops);
+    };
 
     const handleShowShopsCategories = (shopId) => {
         setDisableShowCategoriesButton(false);
@@ -136,6 +172,9 @@ export default function ManageUsersShops(props) {
 
     return (
         <div>
+            {roleId === 2 && <button onClick={handleAddShop}>Add shop</button>}
+            {showAddShopComponent && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
+
             <p>Shops:</p>
             {shops && shops.map((shop, index) => (
                 <div
