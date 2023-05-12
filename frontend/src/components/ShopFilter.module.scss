@@ -1,22 +1,60 @@
-.filterDivWrapper {
+.filterWrapperDiv {
     width: 50%;
     height: 50%;
     padding: 10px;
-    margin: 0 auto;
+    margin: 10px auto 0 auto;
+    grid-area: filter;
 }
 
-.distDivWrapper {
+.distWrapperDiv {
+    display: flex;
+    align-items: center;
     margin-bottom: 10px;
+    justify-content: space-around;
 
     label {
-        margin-right: 10px;
+        margin-right: 5px;
     }
     
     span {
-        margin-left: 10px;
+        margin-left: 5px;
     }
 
     input {
-        width: 50%;
+        width: 72%;
     }
+}
+
+.filteredShopWrapperDiv {
+    background: #f6f6f4;
+    padding: 1px 8px 1px 2px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.shop {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+}
+
+.nameAddressWrapperDiv {
+    width: 80%;
+}
+
+.buttonsWrapperDiv {
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
+}
+
+.dropdownWrapper {
+    padding: 5px;
+    background: #bccacb;
+    border-radius: 5px;
+    margin: 10px 0 10px 10px;
+}
+
+.dropdownClosedWrapper {
+    padding: 0;
 }

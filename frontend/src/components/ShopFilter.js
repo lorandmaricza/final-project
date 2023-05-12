@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import styles from './ShopFilter.module.scss';
-import classes from "./ManageUsersShops.module.css";
+import classes from './ShopFilter.module.scss';
 import ShopCategories from "./ShopCategories";
 
 export default function ShopFilter(props) {
@@ -66,8 +65,8 @@ export default function ShopFilter(props) {
     }
 
     return (
-        <div className={styles.filterDivWrapper}>
-            <div className={styles.distDivWrapper}>
+        <div className={classes.filterWrapperDiv}>
+            <div className={classes.distWrapperDiv}>
                 <label>distance:</label>
                 <input
                     type="range"
@@ -92,17 +91,23 @@ export default function ShopFilter(props) {
             {shops && shops.map((shop, index) => (
                 <div
                     onClick={() => props.setMapLocation([shop.lat, shop.lng])}
-                    key={index}>
-                    <p>
-                        {shop.address}
-                        <button
-                            onClick={() => handleShowShopsCategories(shop.id)}
-                            disabled={disableShowCategoriesButton && selectedShop === shop.id}
-                        >
-                            show categories
-                        </button>
-                    </p>
-                    <div className={classes.wrapper}>
+                    key={index}
+                    className={classes.filteredShopWrapperDiv}>
+                    <div className={classes.shop}>
+                        <div className={classes.nameAddressWrapperDiv}>
+                            <p>name: {shop.name}</p>
+                            <p>address: {shop.address}</p>
+                        </div>
+                        <div className={classes.buttonsWrapperDiv}>
+                            <button
+                                onClick={() => handleShowShopsCategories(shop.id)}
+                                disabled={disableShowCategoriesButton && selectedShop === shop.id}
+                            >
+                                categories
+                            </button>
+                        </div>
+                    </div>
+                    <div className={selectedShop === shop.id ? classes.dropdownWrapper : classes.dropdownClosedWrapper}>
                         {selectedShop === shop.id && <ShopCategories shopId={shop.id} />}
                     </div>
                 </div>
