@@ -101,12 +101,15 @@ export default function Map(props) {
     }, [shops]);
 
     return (
-        <div className={classes.wrapperDiv}>
+        <div className={roleId === 2 ? classes.manageWrapperDiv : classes.filterWrapperDiv}>
             {roleId === 2 && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
             {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setMapLocation={setMapLocation}/>}
 
-            <div className={classes.mapWrapperDiv}>
+            <div className={roleId === 2 ?
+                classes.mapManageWrapperDiv :
+                classes.mapFilerWrapperDiv}>
                 <div id="map" style={{
+                    margin: 0,
                     height: "500px",
                     width: "100%",
                     borderRadius: "22px",

@@ -182,25 +182,34 @@ export default function ManageUsersShops(props) {
                     onClick={() => props.setMapLocation([shop.lat, shop.lng])}
                     key={index}
                     className={classes.shopWrapperDiv}>
-                    <p className={classes.shop}>
-                        {shop.address}
-                        <button
-                            onClick={() => handleShowShopsCategories(shop.id)}
-                            className={classes.buttons}
-                            disabled={disableShowCategoriesButton && selectedShop === shop.id}
-                        >
-                            categories
-                        </button>
-                        <button onClick={() => handleManageClick(shop.id)} className={classes.buttons}>manage</button>
-                    </p>
-                    <div className={classes.dropdownWrapper}>
+                    <div className={classes.shop}>
+                        <div className={classes.nameAddressWrapperDiv}>
+                            <p>name: {shop.name}</p>
+                            <p>address: {shop.address}</p>
+                        </div>
+                        <div className={classes.buttonsWrapperDiv}>
+                            <button
+                                onClick={() => handleShowShopsCategories(shop.id)}
+                                className={classes.buttons}
+                                disabled={disableShowCategoriesButton && selectedShop === shop.id}
+                            >
+                                categories
+                            </button>
+                            <button onClick={() => handleManageClick(shop.id)} className={classes.buttons}>manage</button>
+                        </div>
+                    </div>
+                    <div className={selectedShop === shop.id ? classes.dropdownWrapper : classes.dropdownClosedWrapper}>
                         {selectedShop === shop.id && !showAddShopForm && <ShopCategories shopId={shop.id} />}
                         {showAddShopForm === shop.id && <ManageShopForm shopId={shop.id} onUpdateAddress={onUpdateAddress} onUpdateShopName={onUpdateShopName} onUpdateCategory={onUpdateCategory} onDeleteShop={onDeleteShop}/>}
                     </div>
                 </div>
             ))}
             {roleId === 2 && <AddCircleIcon className={classes.addIcon} onClick={handleAddShop}></AddCircleIcon>}
-            {showAddShopComponent && <ManageShopForm isAdd={true} onAddShop={onAddShop} />}
+            {showAddShopComponent &&
+                <div className={classes.manageShopFormWrapperDiv}>
+                    <ManageShopForm isAdd={true} onAddShop={onAddShop} />
+                </div>
+            }
         </div>
     );
 }

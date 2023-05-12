@@ -22,7 +22,7 @@ export default function ManageShopForm(props) {
     const [isUpdateCategoriesButtonDisabled, setIsUpdateCategoriesButtonDisabled] = useState(true);
     const [isCancelButtonClicked, setIsCancelButtonClicked] = useState(false);
     const [,setShop] = useState([]);
-    const API_KEY = "AIzaSyCQ93JMDcbEtU61ljoXD6-MW6yPIbfDfSo";
+    const API_KEY = "...";
     const isAdd = props.isAdd;
     const shopId = props.shopId ?? null;
 
@@ -222,27 +222,23 @@ export default function ManageShopForm(props) {
     }
 
     return (
-        <div className={classes.wrapperDiv}>
-            <input
-                type="text"
-                value={address}
-                onChange={handleAddressChange}
-                placeholder="Search for a location"
-                size="50"
-            />
-            {
-                !isAdd && ( <button onClick={handleUpdateAddress} disabled={isUpdateAddressButtonDisabled}>Update address</button> )
-            }
-            <input
-                type="text"
-                value={shopName}
-                onChange={handleShopNameChange}
-                placeholder="Name of the shop"
-                size="50"
-            />
-            {
-                !isAdd && ( <button onClick={handleUpdateShopName} disabled={isUpdateShopNameButtonDisabled}>Update name</button> )
-            }
+        <div className={isAdd ? classes.addWrapperDiv : classes.wrapperDiv}>
+            <div>
+                {
+                    isAdd && ( <label htmlFor="address" className={classes.labelAddress}>Address: </label> )
+                }
+                <input
+                    type="text"
+                    value={address}
+                    name="address"
+                    onChange={handleAddressChange}
+                    placeholder="Search for a location"
+                    size="50"
+                />
+                {
+                    !isAdd && ( <button onClick={handleUpdateAddress} disabled={isUpdateAddressButtonDisabled}>Update address</button> )
+                }
+            </div>
             {
                 showPredictions && (
                     <ul className={classes.autocomplete}>
@@ -258,6 +254,22 @@ export default function ManageShopForm(props) {
                     </ul>
                 )
             }
+            <div>
+                {
+                    isAdd && ( <label htmlFor="shopName" className={classes.labelShopName}>Name: </label> )
+                }
+                <input
+                    type="text"
+                    value={shopName}
+                    name="shopName"
+                    onChange={handleShopNameChange}
+                    placeholder="Name of the shop"
+                    size="50"
+                />
+                {
+                    !isAdd && ( <button onClick={handleUpdateShopName} className={classes.updateNameButton} disabled={isUpdateShopNameButtonDisabled}>Update name</button> )
+                }
+            </div>
             {
                 categories.map((category) => (
                     <div>
@@ -266,6 +278,7 @@ export default function ManageShopForm(props) {
                             key={category[0]}
                             id={category[0]}
                             name={category[1]}
+                            className={classes.inputCheckbox}
                             onChange={handleCategoryCheck}
                             checked={shopId && checkedCategories.some((categoryShop) => categoryShop === category[0])}
                         />
@@ -273,16 +286,18 @@ export default function ManageShopForm(props) {
                     </div>
                 ))
             }
-            {
-                isAdd ?
-                    ( <button onClick={handleAddShop} disabled={isAddButtonDisabled}>Add</button> ) :
-                    ( <button onClick={handleUpdateCategory} disabled={isUpdateCategoriesButtonDisabled}>Update categories</button> )
-            }
-            {
-                isAdd ?
-                    ( <button onClick={handleCancel}>Cancel</button> ) :
-                    ( <button onClick={handleDelete}>Delete</button> )
-            }
+            <div className={classes.buttonWrapperDiv}>
+                {
+                    isAdd ?
+                        ( <button onClick={handleAddShop} disabled={isAddButtonDisabled}>Add</button> ) :
+                        ( <button onClick={handleUpdateCategory} disabled={isUpdateCategoriesButtonDisabled}>Update categories</button> )
+                }
+                {
+                    isAdd ?
+                        ( <button onClick={handleCancel}>Cancel</button> ) :
+                        ( <button onClick={handleDelete}>Delete</button> )
+                }
+            </div>
         </div>
     );
 };

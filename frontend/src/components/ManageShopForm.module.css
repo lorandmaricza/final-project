@@ -1,12 +1,24 @@
 .wrapperDiv {
-    margin-left: 5px;
-    display: inline;
+    position: relative;
+    padding: 10px;
+    background: #ece5e5;
+    border-radius: 5px;
+    margin: 10px 0 10px 12px;
+}
+
+.addWrapperDiv {
+    position: relative;
+    padding: 10px;
+    background: #f6f6f4;
+    border-radius: 5px;
+    margin: 10px 0 10px 12px;
 }
 
 .autocomplete {
     position: absolute;
-    left: 72px;
-    top: 335px;
+    left: -30px;
+    top: 12%;
+    z-index: 1000;
 }
 
 .autocompleteItems {
@@ -20,3 +32,22 @@
     background: #b8daf5;
 }
 
+.inputCheckbox {
+    width: 10em !important;
+}
+
+.updateNameButton {
+    width: 134px;
+}
+
+.labelAddress {
+    margin-right: 10px;
+}
+
+.labelShopName {
+    margin-right: 24px;
+}
+
+.buttonWrapperDiv {
+    margin: 15px 0 0 -5px;
+}

@@ -7,6 +7,8 @@
 }
 
 .inputWrapper {
+    display: flex;
+    justify-content: center;
     width: auto;
     margin: 10px 0;
     padding: 15px 10px 10px;
@@ -36,7 +38,7 @@ h2, p {
 
 .inputCategory {
     width: 30%;
-    margin-left:  20px;
+    margin: 0 0 0 20px !important;
     max-width: none;
 }
 

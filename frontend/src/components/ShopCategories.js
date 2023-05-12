@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import classes from './ShopCategories.module.css';
 
 export default function ShopCategories({ shopId }) {
     const [categories, setCategories] = useState([]);
@@ -27,7 +28,14 @@ export default function ShopCategories({ shopId }) {
 
     return (
         <ul>
-            {categories && categories.map((category) => <li key={category.id}>{category.name}</li>)}
+            {
+                categories && categories.map((category) =>
+                <li
+                    key={category.id}
+                    className={classes.listItem}>
+                    {category.name}
+                </li>)
+            }
         </ul>
     );
 }

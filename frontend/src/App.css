@@ -33,7 +33,7 @@ button:hover {
 }
 
 button:disabled {
-    background-color: #773b52;
+    background-color: #a75e7a;
 }
 
 .leaflet-container {
