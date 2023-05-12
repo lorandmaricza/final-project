@@ -25,6 +25,7 @@ while ($row = $result->fetch_assoc()) {
         'lat' => $row['lat'],
         'lng' => $row['lng'],
         'address' => $row['address'],
+        'name' => $row['name'],
         'user_id' => $row['user_id']
     );
     $shops[] = $shop;

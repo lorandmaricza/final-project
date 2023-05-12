@@ -22,7 +22,7 @@ $lng = $conn->escape_string($lng);
 $distance = $conn->escape_string($distance);
 $categories_str = implode(",", $categories);
 
-$sql = "SELECT s.id, s.address, s.user_id, ST_X(s.location) as lat, ST_Y(s.location) as lng 
+$sql = "SELECT s.id, s.address, s.name, s.user_id, ST_X(s.location) as lat, ST_Y(s.location) as lng 
         FROM shops AS s 
         JOIN shops_categories AS sc ON s.id = sc.shop_id
         WHERE sc.category_id IN ($categories_str)
@@ -41,6 +41,7 @@ while ($row = $result->fetch_assoc()) {
         'lat' => $row['lat'],
         'lng' => $row['lng'],
         'address' => $row['address'],
+        'name' => $row['name'],
         'user_id' => $row['user_id']
     );
     $shops[] = $shop;

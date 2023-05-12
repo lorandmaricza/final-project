@@ -9,10 +9,11 @@ $lng = $data['lng'];
 $address = $data['address'];
 $user_id = $data['userId'];
 $categories_array = $data['checkedCategories'];
+$shop_name = $data['shopName'];
 
-$sql = 'INSERT INTO shops (location, user_id, address) VALUES (POINT(?, ?), ?, ?)';
+$sql = 'INSERT INTO shops (location, user_id, address, name) VALUES (POINT(?, ?), ?, ?, ?)';
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('ddis', $lat, $lng, $user_id, $address);
+$stmt->bind_param('ddiss', $lat, $lng, $user_id, $address, $shop_name);
 
 try {
     $stmt->execute();
