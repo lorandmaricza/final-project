@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import classes from './ShopFilter.module.scss';
 
-export default function ShopFilter({ currentLocation, setFilteredShops}) {
+export default function ShopFilter({ currentLocation, setFilteredShops, onDistanceChange }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [distance, setDistance] = useState(1);
@@ -43,7 +43,7 @@ export default function ShopFilter({ currentLocation, setFilteredShops}) {
         };
 
         fetchFilteredShops().then(() => {});
-    }, [currentLocation.lat, currentLocation.lng, distance, selectedCategories, setFilteredShops]);
+    }, [distance, selectedCategories, setFilteredShops]);
 
     const handleCategoryChange = (selectedOptions) => {
         const values = selectedOptions.map((option) => parseInt(option.value));
@@ -52,6 +52,9 @@ export default function ShopFilter({ currentLocation, setFilteredShops}) {
 
     const handleDistanceChange = (event) => {
         setDistance(event.target.value);
+        if (onDistanceChange) {
+            onDistanceChange(event.target.value);
+        }
     };
 
     return (

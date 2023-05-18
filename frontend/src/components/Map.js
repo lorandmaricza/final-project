@@ -33,6 +33,7 @@ const fetchShops = async (setShops) => {
 };
 
 export default function Map(props) {
+    const [distance, setDistance] = useState(1);
     const [shops, setShops] = useState([]);
     const [filteredShops, setFilteredShops] = useState([]);
     const mapRef = useRef(null);
@@ -40,6 +41,7 @@ export default function Map(props) {
     const [mapLocation, setMapLocation] = useState([lat, lng]);
     const [userLocationMarker, setUserLocationMarker] = useState(null);
     const userLocationMarkerRef = useRef(userLocationMarker);
+    const userLocationCircleRef = useRef(null);
 
     useEffect(() => {
         userLocationMarkerRef.current = userLocationMarker;
@@ -136,6 +138,19 @@ export default function Map(props) {
         }
     }, [filteredShops]);
 
+    useEffect(() => {
+        const map = mapRef.current;
+        if (map && userLocationMarker) {
+            const radius = distance * 1000;
+
+            if (userLocationCircleRef.current) {
+                map.removeLayer(userLocationCircleRef.current);
+            }
+
+            const circle = L.circle([userLocationMarker._latlng.lat, userLocationMarker._latlng.lng], { radius: radius }).addTo(map);
+            userLocationCircleRef.current = circle;
+        }
+    }, [distance, userLocationMarker]);
 
     return (
         <div className={
@@ -144,7 +159,7 @@ export default function Map(props) {
             ((!filteredShops || filteredShops.length === 0) ? classes.filterEmptyWrapperDiv : classes.filterWrapperDiv)}
         >
             {roleId === 2 && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
-            {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setFilteredShops={setFilteredShops}/>}
+            {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setFilteredShops={setFilteredShops} onDistanceChange={setDistance} />}
             {roleId === 1 && <FilteredShops filteredShops={filteredShops} setMapLocation={setMapLocation}/>}
 
             <div className={roleId === 2 ?
