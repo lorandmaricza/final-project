@@ -70,6 +70,8 @@ function ManageCategories() {
         setInputCategory("");
     };
 
+    const isInputEmpty = inputCategory.trim() === '';
+
     return (
         <div className={classes.wrapperDiv}>
             <h2>Manage the available categories of grocery goods: </h2>
@@ -89,7 +91,11 @@ function ManageCategories() {
                         <button onClick={handleUpdateCategory} className={classes.buttons}>Update Category</button>
                         <button onClick={handleCancel}>Cancel</button>
                     </div> :
-                    <button onClick={handleAddCategory} className={classes.buttons}>Add Category</button>
+                    <button
+                        onClick={handleAddCategory}
+                        className={classes.buttons}
+                        disabled={isInputEmpty}
+                    >Add Category</button>
                 }
             </div>
             <table>
