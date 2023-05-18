@@ -2,9 +2,11 @@ import React, {useState, useEffect, useRef} from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import shop from '../assets/icons/shop.svg';
+import location from '../assets/icons/location.svg';
 import classes from "./Map.module.css";
 import ManageUsersShops from "./ManageUsersShops";
 import ShopFilter from "./ShopFilter";
+import FilteredShops from "./FilteredShops";
 
 const zoom = 15;
 const lat = 47.49720000;
@@ -12,6 +14,11 @@ const lng = 19.04120000;
 
 const shopIcon = L.icon({
     iconUrl: shop,
+    iconSize: [50, 50]
+});
+
+const userLocationIcon = L.icon({
+    iconUrl: location,
     iconSize: [50, 50]
 });
 
@@ -27,9 +34,16 @@ const fetchShops = async (setShops) => {
 
 export default function Map(props) {
     const [shops, setShops] = useState([]);
+    const [filteredShops, setFilteredShops] = useState([]);
     const mapRef = useRef(null);
     const { id: userId, role_id: roleId} = props.userData;
     const [mapLocation, setMapLocation] = useState([lat, lng]);
+    const [userLocationMarker, setUserLocationMarker] = useState(null);
+    const userLocationMarkerRef = useRef(userLocationMarker);
+
+    useEffect(() => {
+        userLocationMarkerRef.current = userLocationMarker;
+    }, [userLocationMarker]);
 
     useEffect(() => {
         let map;
@@ -43,6 +57,20 @@ export default function Map(props) {
                 "https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=1ZU1Tl8qgksGLRZjVgyo4VpSFp2RcByNResEUKhri9GEuaGikhLfYxHKfINtbSHR",
                 {}
             ).addTo(map);
+
+            map.on("locationfound", function (e) {
+                setMapLocation([e.latlng.lat, e.latlng.lng]);
+
+                if (userLocationMarkerRef.current) {
+                    map.removeLayer(userLocationMarkerRef.current);
+                }
+
+                const marker = L.marker([e.latlng.lat, e.latlng.lng], {
+                    icon: userLocationIcon,
+                }).addTo(map);
+
+                setUserLocationMarker(marker);
+            });
 
             const customControl = L.Control.extend({
                 options: {
@@ -59,9 +87,6 @@ export default function Map(props) {
 
                     container.addEventListener("click", function () {
                         map.locate({ setView: true, maxZoom: 16 });
-                        map.on("locationfound", function (e) {
-                            setMapLocation([e.latlng.lat, e.latlng.lng]);
-                        });
                     });
 
                     return container;
@@ -83,7 +108,7 @@ export default function Map(props) {
             const map = mapRef.current;
 
             map.eachLayer((layer) => {
-                if (layer instanceof L.Marker) {
+                if (layer instanceof L.Marker && layer !== userLocationMarker) {
                     map.removeLayer(layer);
                 }
             });
@@ -93,17 +118,34 @@ export default function Map(props) {
                 const marker = L.marker(latLng, {
                     icon: shopIcon,
                 }).addTo(mapRef.current);
-                if (location.information) {
-                    marker.bindPopup(location.information);
-                }
+
+                marker.bindPopup(`
+                    <div style="text-align: center;">
+                    <b>${location.name}</b>
+                    <hr style="border-top: 1px dotted #c49b9b;">
+                    <b>${location.address}</b>
+                    </div>
+                `);
             });
         }
-    }, [shops]);
+    }, [shops, userLocationMarker]);
+
+    useEffect(() => {
+        if (mapRef.current) {
+            mapRef.current.invalidateSize();
+        }
+    }, [filteredShops]);
+
 
     return (
-        <div className={roleId === 2 ? classes.manageWrapperDiv : classes.filterWrapperDiv}>
+        <div className={
+            roleId === 2 ?
+            classes.manageWrapperDiv :
+            ((!filteredShops || filteredShops.length === 0) ? classes.filterEmptyWrapperDiv : classes.filterWrapperDiv)}
+        >
             {roleId === 2 && <ManageUsersShops userId={userId} roleId={roleId} setMapLocation={setMapLocation}/>}
-            {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setMapLocation={setMapLocation}/>}
+            {roleId === 1 && <ShopFilter currentLocation={props.currentLocation} setFilteredShops={setFilteredShops}/>}
+            {roleId === 1 && <FilteredShops filteredShops={filteredShops} setMapLocation={setMapLocation}/>}
 
             <div className={roleId === 2 ?
                 classes.mapManageWrapperDiv :

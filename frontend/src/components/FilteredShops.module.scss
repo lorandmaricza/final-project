@@ -1,0 +1,38 @@
+.filteredShopsWrapperDiv {
+    grid-area: filteredShops;
+}
+
+.filteredShopWrapperDiv {
+    height: fit-content;
+    background: #f6f6f4;
+    padding: 1px 8px 1px 2px;
+    margin: 0 0 10px 18px;
+    border-radius: 5px;
+}
+
+.shop {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+}
+
+.nameAddressWrapperDiv {
+    width: 80%;
+}
+
+.buttonsWrapperDiv {
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
+}
+
+.dropdownWrapper {
+    padding: 5px;
+    background: #ece5e5;
+    border-radius: 5px;
+    margin: 10px 0 10px 10px;
+}
+
+.dropdownClosedWrapper {
+    padding: 0;
+}

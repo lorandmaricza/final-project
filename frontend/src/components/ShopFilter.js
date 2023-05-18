@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import classes from './ShopFilter.module.scss';
-import ShopCategories from "./ShopCategories";
 
-export default function ShopFilter(props) {
+export default function ShopFilter({ currentLocation, setFilteredShops}) {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [distance, setDistance] = useState(1);
-    const [shops, setShops] = useState([]);
-    const { currentLocation } = props;
-    const [selectedShop, setSelectedShop] = useState(null);
-    const [disableShowCategoriesButton, setDisableShowCategoriesButton] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -44,11 +39,11 @@ export default function ShopFilter(props) {
                 }
             );
             const data = await response.json();
-            setShops(data.shops);
+            setFilteredShops(data.shops);
         };
 
         fetchFilteredShops().then(() => {});
-    }, [distance, selectedCategories]);
+    }, [currentLocation.lat, currentLocation.lng, distance, selectedCategories, setFilteredShops]);
 
     const handleCategoryChange = (selectedOptions) => {
         const values = selectedOptions.map((option) => parseInt(option.value));
@@ -58,11 +53,6 @@ export default function ShopFilter(props) {
     const handleDistanceChange = (event) => {
         setDistance(event.target.value);
     };
-
-    const handleShowShopsCategories = (shopId) => {
-        setDisableShowCategoriesButton(false);
-        setSelectedShop(selectedShop === shopId ? null : shopId);
-    }
 
     return (
         <div className={classes.filterWrapperDiv}>
@@ -88,30 +78,6 @@ export default function ShopFilter(props) {
                     )}
                 />
             ) : null}
-            {shops && shops.map((shop, index) => (
-                <div
-                    onClick={() => props.setMapLocation([shop.lat, shop.lng])}
-                    key={index}
-                    className={classes.filteredShopWrapperDiv}>
-                    <div className={classes.shop}>
-                        <div className={classes.nameAddressWrapperDiv}>
-                            <p>name: {shop.name}</p>
-                            <p>address: {shop.address}</p>
-                        </div>
-                        <div className={classes.buttonsWrapperDiv}>
-                            <button
-                                onClick={() => handleShowShopsCategories(shop.id)}
-                                disabled={disableShowCategoriesButton && selectedShop === shop.id}
-                            >
-                                categories
-                            </button>
-                        </div>
-                    </div>
-                    <div className={selectedShop === shop.id ? classes.dropdownWrapper : classes.dropdownClosedWrapper}>
-                        {selectedShop === shop.id && <ShopCategories shopId={shop.id} />}
-                    </div>
-                </div>
-            ))}
         </div>
     );
 }
