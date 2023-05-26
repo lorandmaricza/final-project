@@ -127,7 +127,9 @@ export default function Map(props) {
                     <hr style="border-top: 1px dotted #c49b9b;">
                     <b>${location.address}</b>
                     </div>
-                `);
+                `, {
+                    offset: [0,-18],
+                });
             });
         }
     }, [shops, userLocationMarker]);
