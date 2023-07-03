@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import shop from '../assets/icons/shop.svg';
@@ -149,10 +149,15 @@ export default function Map(props) {
                 map.removeLayer(userLocationCircleRef.current);
             }
 
-            const circle = L.circle([userLocationMarker._latlng.lat, userLocationMarker._latlng.lng], { radius: radius }).addTo(map);
-            userLocationCircleRef.current = circle;
+            if (roleId !== 2) {
+                userLocationCircleRef.current = L.circle(
+                    [userLocationMarker._latlng.lat,
+                        userLocationMarker._latlng.lng],
+                    {radius: radius}
+                ).addTo(map);
+            }
         }
-    }, [distance, userLocationMarker]);
+    }, [distance, roleId, userLocationMarker]);
 
     return (
         <div className={

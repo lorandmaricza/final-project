@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import './LoginPage.module.css';
+import classes from './LoginPage.module.css';
 
 export default function LoginPage(props) {
     const [user, setUser] = useState({
@@ -10,6 +10,15 @@ export default function LoginPage(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError("");
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
 
     const handleChange = e => {
         setUser({
@@ -43,7 +52,11 @@ export default function LoginPage(props) {
         <div>
             <form onSubmit={handleSubmit}>
                 <h1>Log in</h1>
-                <p>{error}</p>
+                {error && (
+                    <div className={classes.errorWrapperDiv}>
+                        <p>{error}</p>
+                    </div>
+                )}
                 <div>
                     <input
                         type="text"

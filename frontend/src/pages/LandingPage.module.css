@@ -8,8 +8,8 @@
 }
 
 .imgDiv {
-    height: 600px;
-    background-image: url("../assets/background/landing-frame-full.png");
+    height: 60rem;
+    background-image: url("../assets/background/landing-frame.png");
     background-repeat: no-repeat;
     background-size: 80%;
 }

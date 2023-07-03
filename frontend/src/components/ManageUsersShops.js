@@ -19,16 +19,6 @@ const saveShop = async (shop) => {
     }
 };
 
-const fetchShops = async (setShops) => {
-    try {
-        const response = await fetch('http://localhost:8888/final-project/backend/shop/get-shops.php');
-        const data = await response.json();
-        setShops(data.shops);
-    } catch (error) {
-        console.error(error);
-    }
-};
-
 export default function ManageUsersShops(props) {
     const { userId, roleId } = props;
     const [shops, setShops] = useState([]);
@@ -37,20 +27,25 @@ export default function ManageUsersShops(props) {
     const [disableShowCategoriesButton, setDisableShowCategoriesButton] = useState(false);
     const [shopDeleted, setShopDeleted] = useState(false);
     const [shopChanged, setShopChanged] = useState(false);
+    const [shopAdded, setShopAdded] = useState(false);
     const [showAddShopComponent, setShowAddShopComponent] = useState(false);
 
     useEffect(() => {
         const fetchShops = async () => {
             try {
-                const response = await fetch(`http://localhost:8888/final-project/backend/shop/get-user-shops.php`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: 'include',
-                    body: JSON.stringify({ userId })
-                });
+                const response = await fetch(
+                    `http://localhost:8888/final-project/backend/shop/get-user-shops.php`,
+                    {
+                        method: 'POST',
+                        mode: 'cors',
+                        credentials: 'include',
+                        body: JSON.stringify({ userId })
+                    }
+                );
                 const data = await response.json();
                 setShops(data.shops);
                 setShopChanged(false);
+                setShopAdded(false);
             } catch (error) {
                 console.error(error);
             }
@@ -58,7 +53,7 @@ export default function ManageUsersShops(props) {
 
         fetchShops().then(() => {});
         setShopDeleted(false);
-    }, [userId, shopDeleted, shopChanged]);
+    }, [userId, shopDeleted, shopChanged, shopAdded]);
 
     const handleAddShop = () => {
         setShowAddShopComponent(!showAddShopComponent);
@@ -67,7 +62,7 @@ export default function ManageUsersShops(props) {
     const onAddShop = async (shop) => {
         const shopToSave = {...shop, userId};
         await saveShop(shopToSave);
-        await fetchShops(setShops);
+        setShopAdded(true);
     };
 
     const handleShowShopsCategories = (shopId) => {
@@ -184,8 +179,8 @@ export default function ManageUsersShops(props) {
                     className={classes.shopWrapperDiv}>
                     <div className={classes.shop}>
                         <div className={classes.nameAddressWrapperDiv}>
-                            <p>name: {shop.name}</p>
-                            <p>address: {shop.address}</p>
+                            <p className={classes.shopNameParagraph}>{shop.name}</p>
+                            <p>{shop.address}</p>
                         </div>
                         <div className={classes.buttonsWrapperDiv}>
                             <button
@@ -200,14 +195,24 @@ export default function ManageUsersShops(props) {
                     </div>
                     <div className={selectedShop === shop.id ? classes.dropdownWrapper : classes.dropdownClosedWrapper}>
                         {selectedShop === shop.id && !showAddShopForm && <ShopCategories shopId={shop.id} />}
-                        {showAddShopForm === shop.id && <ManageShopForm shopId={shop.id} onUpdateAddress={onUpdateAddress} onUpdateShopName={onUpdateShopName} onUpdateCategory={onUpdateCategory} onDeleteShop={onDeleteShop}/>}
+                        {showAddShopForm === shop.id &&
+                            <ManageShopForm
+                                shopId={shop.id}
+                                onUpdateAddress={onUpdateAddress}
+                                onUpdateShopName={onUpdateShopName}
+                                onUpdateCategory={onUpdateCategory}
+                                onDeleteShop={onDeleteShop}
+                            />}
                     </div>
                 </div>
             ))}
             {roleId === 2 && <AddCircleIcon className={classes.addIcon} onClick={handleAddShop}></AddCircleIcon>}
             {showAddShopComponent &&
                 <div className={classes.manageShopFormWrapperDiv}>
-                    <ManageShopForm isAdd={true} onAddShop={onAddShop} />
+                    <ManageShopForm
+                        isAdd={true}
+                        onAddShop={onAddShop}
+                    />
                 </div>
             }
         </div>

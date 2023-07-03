@@ -18,8 +18,8 @@ export default function FilteredShops({ filteredShops, setMapLocation }) {
                     className={classes.filteredShopWrapperDiv}>
                     <div className={classes.shop}>
                         <div className={classes.nameAddressWrapperDiv}>
-                            <p>name: {shop.name}</p>
-                            <p>address: {shop.address}</p>
+                            <p className={classes.shopNameParagraph}>{shop.name}</p>
+                            <p>{shop.address}</p>
                         </div>
                         <div className={classes.buttonsWrapperDiv}>
                             <button

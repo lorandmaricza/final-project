@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { checkSession } from "../utils/helpers";
 import { useNavigate } from "react-router-dom";
-import classes from "./UserInfoPage.module.css";
+import classes from "./UserInfoPage.module.scss";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function UserInfoPage() {
@@ -10,9 +10,10 @@ export default function UserInfoPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [updatedData, setUpdatedData] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    const [previousPassword, setPreviousPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    // const [passwordError, setPasswordError] = useState(null);
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const [passwordError, setPasswordError] = useState(null);
 
     useEffect(() => {
         checkSession()
@@ -51,10 +52,10 @@ export default function UserInfoPage() {
     };
 
     const handleSave = async () => {
-        // if (newPassword !== confirmPassword) {
-        //     setPasswordError("Passwords do not match");
-        //     return;
-        // }
+        if (newPassword !== confirmNewPassword) {
+            setPasswordError("Passwords do not match");
+            return;
+        }
 
         try {
             const response = await fetch(
@@ -63,7 +64,7 @@ export default function UserInfoPage() {
                     method: "POST",
                     mode: 'cors',
                     credentials: 'include',
-                    body: JSON.stringify({ ...updatedData, password: newPassword }),
+                    body: JSON.stringify({ ...updatedData, password: newPassword, previous_password: previousPassword }),
                 });
 
             const data = await response.json();
@@ -83,15 +84,19 @@ export default function UserInfoPage() {
         setUpdatedData({ ...updatedData, [event.target.name]: event.target.value });
     };
 
-    const handlePasswordChange = (event) => {
-        setShowPassword(false);
-        // setPasswordError(null);
+    const handlePreviousPasswordChange = (event) => {
+        setPreviousPassword(event.target.value);
+    }
+
+    const handleNewPasswordChange = (event) => {
+        // setShowPassword(false);
+        setPasswordError(null);
         setNewPassword(event.target.value);
     };
 
-    const handleConfirmPasswordChange = (event) => {
-        // setPasswordError(null);
-        setConfirmPassword(event.target.value);
+    const handleConfirmNewPasswordChange = (event) => {
+        setPasswordError(null);
+        setConfirmNewPassword(event.target.value);
     };
 
     const toggleShowPassword = () => {
@@ -104,53 +109,65 @@ export default function UserInfoPage() {
             <div className={classes.wrapperDiv}>
                 <div className={isEditing ? classes.editSubWrapperDiv : classes.subWrapperDiv}>
                     <h1 className={classes.header}>Welcome {userData.first_name}!</h1>
-                    {!isEditing ?
+                    <h2>{passwordError}</h2>
+                    <div>
+                        {!isEditing ?
+                            <div className={classes.inputEditWrapperDiv}>
+                                <p>Role: </p>
+                                <b>{getRole(userData.role_id)}</b>
+                            </div> : <></>}
                         <div className={classes.inputEditWrapperDiv}>
-                            <p>Role: </p>
-                            <b>{getRole(userData.role_id)}</b>
-                        </div> : <></>}
-                    <div className={classes.inputEditWrapperDiv}>
-                        <p>Email: </p>
-                        {isEditing ? <input type="text" name="email" value={updatedData.email} className={classes.textInput} onChange={handleChange} /> : <b>{userData.email}</b>}
-                    </div>
-                    <div className={classes.inputEditWrapperDiv}>
-                        <p>First Name: </p>
-                        {isEditing ? <input type="text" name="first_name" value={updatedData.first_name} className={classes.textInput} onChange={handleChange} /> : <b>{userData.first_name}</b>}
-                    </div>
-                    <div className={classes.inputEditWrapperDiv}>
-                        <p>Last Name: </p>
-                        {isEditing ? <input type="text" name="last_name" value={updatedData.last_name} className={classes.textInput} onChange={handleChange} /> : <b>{userData.last_name}</b>}
-                    </div>
-                    {isEditing && (
-                        <div className={classes.inputEditWrapperDiv}>
-                            <p>Password: </p>
-                            <input type={showPassword ? "text" : "password"} name="password" value={newPassword} className={classes.textInput} onChange={handlePasswordChange} />
+                            <p>Email: </p>
+                            {isEditing ? <input type="text" name="email" value={updatedData.email} className={classes.textInput} onChange={handleChange} /> : <b>{userData.email}</b>}
                         </div>
-                    )}
-                    {isEditing ? (
                         <div className={classes.inputEditWrapperDiv}>
-                            <p>Confirm Password: </p>
-                            {isEditing ? (
-                                <>
-                                    <input type={showPassword ? "text" : "password"} name="confirm_password" value={confirmPassword} className={classes.textInput} onChange={handleConfirmPasswordChange} />
-                                </>
-                            ) : <></>}
+                            <p>First Name: </p>
+                            {isEditing ? <input type="text" name="first_name" value={updatedData.first_name} className={classes.textInput} onChange={handleChange} /> : <b>{userData.first_name}</b>}
                         </div>
-                    ) : <></>}
-                    {isEditing ? (
-                        <>
-                            <button onClick={toggleShowPassword}>
-                                {showPassword ? "Hide passwords" : "Show passwords"}
+                        <div className={classes.inputEditWrapperDiv}>
+                            <p>Last Name: </p>
+                            {isEditing ? <input type="text" name="last_name" value={updatedData.last_name} className={classes.textInput} onChange={handleChange} /> : <b>{userData.last_name}</b>}
+                        </div>
+                        {isEditing && (
+                            <div className={classes.inputEditWrapperDiv}>
+                                <p>Previous Password: </p>
+                                <input type={showPassword ? "text" : "password"} name="password" value={newPassword} className={classes.textInput} onChange={handlePreviousPasswordChange} />
+                            </div>
+                        )}
+                        {isEditing && (
+                            <div className={classes.inputEditWrapperDiv}>
+                                <p>New Password: </p>
+                                <input type={showPassword ? "text" : "password"} name="password" value={newPassword} className={classes.textInput} onChange={handleNewPasswordChange} />
+                            </div>
+                        )}
+                        {isEditing ? (
+                            <div className={classes.inputEditWrapperDiv}>
+                                <p>Confirm New Password: </p>
+                                {isEditing ? (
+                                    <>
+                                        <input type={showPassword ? "text" : "password"} name="confirm_password" value={confirmNewPassword} className={classes.textInput} onChange={handleConfirmNewPasswordChange} />
+                                    </>
+                                ) : <></>}
+                            </div>
+                        ) : <></>}
+                    </div>
+                    <div className={classes.buttonWrapperDiv}>
+                        {isEditing ? (
+                            <>
+                                <button onClick={toggleShowPassword}>
+                                    {showPassword ? "Hide passwords" : "Show passwords"}
+                                </button>
+                                <button onClick={handleSave}>
+                                    Save
+                                </button>
+                            </>
+                        ) : (
+                            // <button onClick={handleEdit}>
+                            <button onClick={handleEdit} disabled={true}>
+                                Edit
                             </button>
-                            <button onClick={handleSave}>
-                                Save
-                            </button>
-                        </>
-                    ) : (
-                        <button onClick={handleEdit}>
-                            Edit
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

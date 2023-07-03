@@ -4,6 +4,7 @@ include 'cors.php';
 global $conn;
 
 $data = json_decode(file_get_contents('php://input'), true);
+
 $first_name = $data['firstName'];
 $last_name = $data['lastName'];
 $email = $data['email'];
@@ -11,10 +12,9 @@ $password = $data['password'];
 $confirm_password = $data['confirmPassword'];
 $role = $data['role'] == 'consumer' ? 1 : 2;
 
-$query1 = 'SELECT * FROM users WHERE email = ?';
 $query2 = 'INSERT INTO users (first_name, last_name, email, password, role_id) VALUES (?,?,?,?,?)';
 
-if(empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password) || empty($role) ) {
+if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password) || empty($role)) {
     echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
     exit();
 }
@@ -24,6 +24,7 @@ if($password !== $confirm_password) {
     exit();
 }
 
+$query1 = 'SELECT * FROM users WHERE email = ?';
 $stmt = $conn->prepare($query1);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -31,7 +32,10 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if($user) {
-    echo json_encode(['status' => 'error', 'message' => 'Email already exists']);
+    echo json_encode([
+            'status' => 'error',
+            'message' => 'Email already exists'
+        ]);
     exit();
 }
 

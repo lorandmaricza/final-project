@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import styles from './LoginPage.module.css';
+import classes from './LoginPage.module.css';
 
 function SignUpPage() {
     const [user, setUser] = useState({
@@ -14,6 +14,15 @@ function SignUpPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError("");
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
 
     const handleChange = e => {
         setUser({
@@ -45,7 +54,11 @@ function SignUpPage() {
             <form onSubmit={handleSubmit}>
                 <h1>Sign up</h1>
                 <p>Create your account</p>
-                <p>{error}</p>
+                {error && (
+                    <div className={classes.errorWrapperDiv}>
+                        <p>{error}</p>
+                    </div>
+                )}
                 <div>
                     <input
                         type="text"
@@ -97,8 +110,8 @@ function SignUpPage() {
                     />
                 </div>
                 <br />
-                <div>
-                    <div className={styles.radioWrapperDiv}>
+                <div className={classes.radioContainerDiv}>
+                    <div className={classes.radioWrapperDiv}>
                         <label htmlFor="css">consumer</label>
                         <input
                             type="radio"
@@ -108,7 +121,7 @@ function SignUpPage() {
                             checked={user.role === "consumer"}
                         />
                     </div>
-                    <div className={styles.radioWrapperDiv}>
+                    <div className={classes.radioWrapperDiv}>
                         <label htmlFor="html">supplier</label>
                         <input
                             type="radio"

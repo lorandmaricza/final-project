@@ -16,8 +16,15 @@
 
 .autocomplete {
     position: absolute;
-    left: -30px;
-    top: 12%;
+    left: -25px;
+    top: 11.4%;
+    z-index: 1000;
+}
+
+.autocompleteAdd {
+    position: absolute;
+    left: 54px;
+    top: 10%;
     z-index: 1000;
 }
 

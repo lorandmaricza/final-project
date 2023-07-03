@@ -13,6 +13,16 @@ function ManageCategories() {
         fetchCategories(setCategories).catch(error => console.log(error));
     }, [categories]);
 
+    useEffect(() => {
+        if (error || message) {
+            const timer = setTimeout(() => {
+                setError("");
+                setMessage("");
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error, message]);
+
     const loadUpdateCategory = (categoryId, categoryName) => {
         setUpdateCategoryId(categoryId);
         setInputCategory(categoryName);
@@ -75,8 +85,8 @@ function ManageCategories() {
     return (
         <div className={classes.wrapperDiv}>
             <h2>Manage the available categories of grocery goods: </h2>
-            <p>{error}</p>
-            <p>{message}</p>
+            <p className={classes.errorParagraph}>{error}</p>
+            <p className={classes.errorParagraph}>{message}</p>
             <div className={classes.inputWrapper}>
                 <input
                     type="text"
