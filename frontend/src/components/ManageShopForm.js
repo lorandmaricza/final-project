@@ -22,7 +22,7 @@ export default function ManageShopForm(props) {
     const [isUpdateCategoriesButtonDisabled, setIsUpdateCategoriesButtonDisabled] = useState(true);
     const [isCancelButtonClicked, setIsCancelButtonClicked] = useState(false);
     const [,setShop] = useState([]);
-    const API_KEY = "AIzaSyC6i1PGPMjCOA-lz3v0808MN7Jfnk7OWYM";
+    const API_KEY = process.env.API_KEY;
     const isAdd = props.isAdd;
     const shopId = props.shopId ?? null;
 
