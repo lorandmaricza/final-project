@@ -43,6 +43,7 @@ export default function ShopFilter({ currentLocation, setFilteredShops, onDistan
         };
 
         fetchFilteredShops().then(() => {});
+        // don't add missing dependencies: 'currentLocation.lat' and 'currentLocation.lng'
     }, [distance, selectedCategories, setFilteredShops]);
 
     const handleCategoryChange = (selectedOptions) => {

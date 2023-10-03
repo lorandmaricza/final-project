@@ -22,7 +22,7 @@ export default function ManageShopForm(props) {
     const [isUpdateCategoriesButtonDisabled, setIsUpdateCategoriesButtonDisabled] = useState(true);
     const [isCancelButtonClicked, setIsCancelButtonClicked] = useState(false);
     const [,setShop] = useState([]);
-    const API_KEY = "...";
+    const API_KEY = "AIzaSyC6i1PGPMjCOA-lz3v0808MN7Jfnk7OWYM";
     const isAdd = props.isAdd;
     const shopId = props.shopId ?? null;
 
@@ -241,7 +241,7 @@ export default function ManageShopForm(props) {
             </div>
             {
                 showPredictions && (
-                    <ul className={classes.autocomplete}>
+                    <ul className={isAdd ? classes.autocompleteAdd : classes.autocomplete}>
                         {predictions.map((prediction) => (
                             <li
                                 className={classes.autocompleteItems}

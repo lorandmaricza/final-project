@@ -6,17 +6,25 @@ global $conn;
 $data = json_decode(file_get_contents('php://input'), true);
 $category_name = $data['categoryName'];
 
-$sql = 'INSERT INTO categories (name) VALUES (?)';
+$check_sql = "SELECT * FROM categories WHERE name = ?";
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->bind_param('s', $category_name);
+$check_stmt->execute();
+$result = $check_stmt->get_result();
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $category_name);
+if ($result->num_rows > 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Category already exists']);
+    exit();
+}
+
+$insert_sql = "INSERT INTO categories (name) VALUES (?)";
+$insert_stmt = $conn->prepare($insert_sql);
+$insert_stmt->bind_param('s', $category_name);
+
 try {
-    $stmt->execute();
-    echo json_encode(['status' => 'success', 'message' => 'Category successfully added.']);
+    $insert_stmt->execute();
+    echo json_encode(['status' => 'success', 'message' => 'Category successfully added']);
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Something went wrong with the category addition.']);
+    echo json_encode(['status' => 'error', 'message' => 'Something went wrong with the category addition']);
 }
 exit();
-
-
-
