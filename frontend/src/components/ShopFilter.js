@@ -24,6 +24,8 @@ export default function ShopFilter({ currentLocation, setFilteredShops, onDistan
 
     useEffect(() => {
         const fetchFilteredShops = async () => {
+            let data = {};
+            data.shops = undefined;
             const response = await fetch(
                 'http://localhost:8888/final-project/backend/shop/get-filtered-shops.php',
                 {
@@ -38,13 +40,13 @@ export default function ShopFilter({ currentLocation, setFilteredShops, onDistan
                     }),
                 }
             );
-            const data = await response.json();
+            data = await response.json();
             setFilteredShops(data.shops);
         };
 
         fetchFilteredShops().then(() => {});
         // don't add missing dependencies: 'currentLocation.lat' and 'currentLocation.lng'
-    }, [distance, selectedCategories, setFilteredShops]);
+    }, [currentLocation, distance, selectedCategories, setFilteredShops]);
 
     const handleCategoryChange = (selectedOptions) => {
         const values = selectedOptions.map((option) => parseInt(option.value));
