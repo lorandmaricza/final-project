@@ -35,10 +35,6 @@ export default function ManageShopForm(props) {
     }, [checkedCategories, isValid]);
 
     useEffect(() => {
-        isValidAddress(address).then(setIsValid);
-    }, [address]);
-
-    useEffect(() => {
         setIsUpdateCategoriesButtonDisabled(checkedCategoriesAreInitial);
     }, [checkedCategoriesAreInitial]);
 
@@ -93,28 +89,32 @@ export default function ManageShopForm(props) {
         }
     }, [shopId]);
 
-    const isValidAddress = async (address) => {
-        if (address === "") return false;
+    useEffect(() => {
+        const isValidAddress = async (address) => {
+            if (address === "") return false;
 
-        let data;
-        try {
-            const response = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${API_KEY}`
-            );
-            data = await response.json();
+            let data;
+            try {
+                const response = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${API_KEY}`
+                );
+                data = await response.json();
 
-            const formattedAddress = data.results[0].formatted_address;
-            const similarityScore = stringSimilarity.compareTwoStrings(
-                address.toLowerCase(),
-                formattedAddress.toLowerCase()
-            );
-            const minimumScore = 0.8;
-            return similarityScore >= minimumScore;
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
-    };
+                const formattedAddress = data.results[0].formatted_address;
+                const similarityScore = stringSimilarity.compareTwoStrings(
+                    address.toLowerCase(),
+                    formattedAddress.toLowerCase()
+                );
+                const minimumScore = 0.8;
+                return similarityScore >= minimumScore;
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
+        };
+
+        isValidAddress(address).then(setIsValid);
+    }, [API_KEY, address]);
 
     const handleSelect = async address => {
         setAddress(address);
@@ -124,16 +124,17 @@ export default function ManageShopForm(props) {
     const handleAddressChange = async e => {
         setAddress(e.target.value);
         setShowPredictions(true);
-        let data;
+        let data = {};
+        data.predictions = undefined;
         try {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${e.target.value}&key=${API_KEY}`
             );
             data = await response.json();
+            setPredictions(data.predictions);
         } catch (e) {
             console.log(e);
         }
-        setPredictions(data.predictions);
     };
 
     const handleShopNameChange = async e => {
